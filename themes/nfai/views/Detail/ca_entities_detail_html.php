@@ -25,6 +25,7 @@
  *
  * ----------------------------------------------------------------------
  */
+
 	$t_entity 			= $this->getVar('t_item');
 	$vn_entity_id 		= $t_entity->getPrimaryKey();
 	
@@ -52,7 +53,8 @@ if (!$this->request->isAjax()) {
 			}
 ?>
 		</div><!-- end nav -->
-		<h1><?php print unicode_ucfirst($this->getVar('typename')).': '.$vs_title; ?></h1>
+		<div><b><?php print unicode_strtoupper($this->getVar('typename')); ?></b></div>
+		<h1><?php print $vs_title; ?></h1>
 		<div id="leftCol">		
 <?php
 			if((!$this->request->config->get('dont_allow_registration_and_login')) && $this->request->config->get('enable_bookmarks')){

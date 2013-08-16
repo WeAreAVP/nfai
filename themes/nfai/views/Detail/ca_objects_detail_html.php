@@ -37,8 +37,37 @@
 
 ?>	
 	<div id="detailBody">
+		<div>
+			<?php if($va_hierarchy = $t_object->get('ca_objects.hierarchy.preferred_labels', array('returnAsArray' => true))){
+				$va_hierarchy_id = $t_object->get('ca_objects.hierarchy.object_id', array('returnAsArray' => true));
+				$va_hierarchy_path = array_combine($va_hierarchy_id, $va_hierarchy);
+				$va_count = count($va_hierarchy_path);
+				$i = 0;
+//				print "<div class='unit'><b>"._t("Hierarchical Path")."</b><br/> ";
+				print '<ul class="breadcrumb">';
+  
+  
+  
+
+				foreach($va_hierarchy_path as $va_id => $va_name) {
+					$class='';
+					if($i+1==$va_count)
+						$class='class="active"';
+					print "<li ".$class.">".caNavLink($this->request, $va_name, '', 'Detail', 'Object', 'Show', array('object_id' => $va_id));
+					if($i+1 != $va_count) {
+						print " <span class='divider'><img src='" . $this->request->getThemeUrlPath() . "/graphics/breadcrumb.png' width='18'> </span>";
+					}
+					print "</li>";
+					$i++;
+				}
+				print "</ul>";
+//				print "</div><!-- end unit -->";
+			} ?>
+		</div>
 		<div id="pageNav">
+			
 <?php
+
 			if (($this->getVar('is_in_result_list')) && ($vs_back_link = ResultContext::getResultsLinkForLastFind($this->request, 'ca_objects', _t("Back"), ''))) {
 				if ($this->getVar('previous_id')) {
 					print caNavLink($this->request, "&lsaquo; "._t("Previous"), '', 'Detail', 'Object', 'Show', array('object_id' => $this->getVar('previous_id')), array('id' => 'previous'));
@@ -54,7 +83,8 @@
 			}
 ?>
 		</div><!-- end nav -->
-		<h1><?php print unicode_ucfirst($this->getVar('typename')).': '.$vs_title; ?></h1>
+		<div><b><?php print unicode_strtoupper($this->getVar('typename')); ?></b></div>
+		<h1><?php print $vs_title; ?></h1>
 		<div id="leftCol">
 <?php
 			if($this->request->config->get('show_add_this')){
@@ -79,21 +109,7 @@
 				}
 				print "</div>";
 			}
-			if($va_hierarchy = $t_object->get('ca_objects.hierarchy.preferred_labels', array('returnAsArray' => true))){
-				$va_hierarchy_id = $t_object->get('ca_objects.hierarchy.object_id', array('returnAsArray' => true));
-				$va_hierarchy_path = array_combine($va_hierarchy_id, $va_hierarchy);
-				$va_count = count($va_hierarchy_path);
-				$i = 0;
-				print "<div class='unit'><b>"._t("Hierarchical Path")."</b><br/> ";
-				foreach($va_hierarchy_path as $va_id => $va_name) {
-					print caNavLink($this->request, $va_name, '', 'Detail', 'Object', 'Show', array('object_id' => $va_id));
-					if($i+1 != $va_count) {
-						print " > ";
-					}
-					$i++;
-				}
-				print "</div><!-- end unit -->";
-			}
+			
 			# --- child hierarchy info
 			$va_children = $t_object->get("ca_objects.children.preferred_labels", array('returnAsArray' => 1, 'checkAccess' => $va_access_values));
 			if(sizeof($va_children) > 0){
@@ -565,3 +581,10 @@
 	
 	
 ?>
+<div id="splashBrowsePanel" class="modal hide" style="z-index:1000;">
+	<div id="splashBrowsePanelContent">
+	</div>
+</div>
+<script type="text/javascript">
+	var caUIBrowsePanel = caUI.initBrowsePanel({facetUrl: '<?php print caNavUrl($this->request, '', 'Browse', 'getFacet'); ?>'});
+</script>

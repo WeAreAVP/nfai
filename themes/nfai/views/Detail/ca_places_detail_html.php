@@ -50,7 +50,8 @@ if (!$this->request->isAjax()) {
 			}
 ?>
 		</div><!-- end nav -->
-		<h1><?php print unicode_ucfirst($t_place->getTypeName()).': '.$vs_title; ?></h1>
+		<div><b><?php print unicode_strtoupper($t_occurrence->getTypeName()); ?></b></div>
+		<h1><?php print $vs_title; ?></h1>
 		<div id="leftCol">	
 <?php
 			if((!$this->request->config->get('dont_allow_registration_and_login')) && $this->request->config->get('enable_bookmarks')){

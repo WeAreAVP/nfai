@@ -1,10 +1,43 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
+		<style type="text/css">
+			@font-face {
+				font-family: 'Conv_Aller';
+				src: url('<?php print $this->request->getThemeUrlPath(true); ?>/css/fonts/Aller_Bd.ttf');
+				
+				font-weight: normal;
+				font-style: normal;
+			}
+			
+			@font-face {
+				font-family: 'HelveticaNeueLight';
+				src: url('<?php print $this->request->getThemeUrlPath(true); ?>/css/fonts/HelveticaNeueLight.ttf');
+				font-weight: normal;
+				font-style: normal;
+			}
+			@font-face {
+				font-family: 'HN';
+				src: url('<?php print $this->request->getThemeUrlPath(true); ?>/css/fonts/HelveticaNeue.ttf');
+			}
+			@font-face {
+				font-family: 'H-bold';
+				src: url('<?php print $this->request->getThemeUrlPath(true); ?>/css/fonts/helvatica-bold.ttf');
+			}
+			@font-face {
+				font-family: 'H-regular';
+				src: url('<?php print $this->request->getThemeUrlPath(true); ?>/css/fonts/helvatica-reg.ttf');
+			}
+
+			@font-face {
+				font-family: 'HelveticaNeueBold';
+				src: url('<?php print $this->request->getThemeUrlPath(true); ?>/css/fonts/helvetica-neue-bold.ttf');
+			}
+		</style>
 		<title><?php print $this->request->config->get('html_page_title'); ?></title>
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 		<?php print MetaTagManager::getHTML(); ?>
-		<link href="<?php print $this->request->getThemeUrlPath(true); ?>/css/bootstrap.css" rel="stylesheet" type="text/css" />
+		<link href="<?php print $this->request->getThemeUrlPath(true); ?>/css/bootstrap.css?<?php echo time(); ?>" rel="stylesheet" type="text/css" />
 		<link href="<?php print $this->request->getThemeUrlPath(true); ?>/css/style.css" rel="stylesheet" type="text/css" />
 		<link href="<?php print $this->request->getThemeUrlPath(true); ?>/css/global.css" rel="stylesheet" type="text/css" />
 		<link href="<?php print $this->request->getThemeUrlPath(true); ?>/css/skin.css" rel="stylesheet" type="text/css" />
@@ -155,13 +188,15 @@
 			<div class="navbar-inner">
 				<a class="brand" href="/">American Folklore Society</a>
 				<ul class="nav pull-right">
-					<?php 
-					$class='';
+					<?php
+					$class = '';
 					$vs_base_url = $this->request->getRequestUrl();
-					if(strstr($vs_base_url,'About/Index')) 
-						$class='active';
+					if (strstr($vs_base_url, 'About/Index'))
+						$class = 'active';
 					?>
-					<li class="<?php echo $class;?>"><?php print join(" ", $this->getVar('nav')->getHTMLMenuBarAsLinkArray());print $this->getVar('about'); ?></li>
+					<li class="<?php echo $class; ?>"><?php print join(" ", $this->getVar('nav')->getHTMLMenuBarAsLinkArray());
+					print $this->getVar('about');
+					?></li>
 				</ul>
 			</div>
 		</div>
@@ -174,11 +209,12 @@
 								<span class="caret"></span>
 							</button>
 							<ul class="dropdown-menu">
-								<li><a href='#'>Collection</a></li>
+
+								<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("collection_facet");'>Collection</a></li> 
 								<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("occurrence_facet_103");'>Repository</a></li>
 
 								<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("entity_facet");'>Individual, Organization<br/> or Meeting</a></li>
-								<li><a href="#">Subject</a></li>
+								<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("lchs_facet");'>Subject</a></li>
 							</ul>
 						</div>
 					</div>
@@ -192,23 +228,23 @@
 					</div>
 				</div>
 				<div class="clearfix"></div>
-<?php
+				<?php
 //				print caNavLink($this->request, "<img src='".$this->request->getThemeUrlPath()."/graphics/".$this->request->config->get('header_img')."' border='0'>", "", "", "", "");
-?>				
+				?>				
 			</div><!-- end header -->
-<?php
+			<?php
 // get last search ('basic_search' is the find type used by the SearchController)
-$o_result_context = new ResultContext($this->request, 'ca_objects', 'basic_search');
-$vs_search = $o_result_context->getSearchExpression();
-?>
-<!--			<div id="nav">
-				<div id="search"><form name="header_search" action="<?php print caNavUrl($this->request, '', 'Search', 'Index'); ?>" method="get">
-						<a href="#" style="position: absolute; z-index:1500; margin: 4px 0px 0px 132px;" name="searchButtonSubmit" onclick="document.forms.header_search.submit();
-				return false;"><?php print "<img src='" . $this->request->getThemeUrlPath() . "/graphics/searchglass.gif' border='0'>"; ?></a>
-						<input type="text" name="search" value=" " onclick='jQuery("#quickSearch").select();' id="quickSearch"  autocomplete="off" size="100"/>
-					</form></div>
-<?php
-print join(" ", $this->getVar('nav')->getHTMLMenuBarAsLinkArray());
-?>
-			</div> end nav -->
-<hr/>
+			$o_result_context = new ResultContext($this->request, 'ca_objects', 'basic_search');
+			$vs_search = $o_result_context->getSearchExpression();
+			?>
+			<!--			<div id="nav">
+							<div id="search"><form name="header_search" action="<?php print caNavUrl($this->request, '', 'Search', 'Index'); ?>" method="get">
+									<a href="#" style="position: absolute; z-index:1500; margin: 4px 0px 0px 132px;" name="searchButtonSubmit" onclick="document.forms.header_search.submit();
+							return false;"><?php print "<img src='" . $this->request->getThemeUrlPath() . "/graphics/searchglass.gif' border='0'>"; ?></a>
+									<input type="text" name="search" value=" " onclick='jQuery("#quickSearch").select();' id="quickSearch"  autocomplete="off" size="100"/>
+								</form></div>
+			<?php
+			print join(" ", $this->getVar('nav')->getHTMLMenuBarAsLinkArray());
+			?>
+						</div> end nav -->
+			<hr style="margin: 16px 0 2px 0;"/>

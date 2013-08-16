@@ -422,7 +422,9 @@ class BrowseController extends BaseBrowseController
 
 	public function test()
 	{
-		
+		$t_object = new ca_objects();
+		$va_objects = $t_object->get("ca_objects", array( "returnAsArray" => 1));
+		echo '<pre>';print_r($va_objects);exit;
 //		$o_data = new Db();
 // $qr_result = $o_data->query("
 //    SELECT * 
@@ -447,7 +449,7 @@ class BrowseController extends BaseBrowseController
 //		print_r($qr_res->getRow());
 //      print "GOT ACCESSION NUM=".$qr_res->getRow()."<br/>\n";
 // }exit;
-		$t_object = new ca_objects();   // load ca_object record with object_id = 40
+		$t_object = new ca_objects(5);   // load ca_object record with object_id = 40
 		echo '<pre>';print_r($t_object->get('ca_occurrences.repository_state', array('convertCodesToDisplayText' => true)));exit;
 //		print "The title of the object is ".$t_object->get('ca_objects.georeference')."<br/>\n";    // get the preferred name of the object
 //		echo '<pre>';print_r($t_object);

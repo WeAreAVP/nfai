@@ -423,6 +423,7 @@ class BrowseController extends BaseBrowseController
 	public function test()
 	{
 		$t_object = new ca_objects();
+			new ObjectBrowse();
 		$va_objects = $t_object->get("ca_objects", array( "returnAsArray" => 1));
 		echo '<pre>';print_r($va_objects);exit;
 //		$o_data = new Db();

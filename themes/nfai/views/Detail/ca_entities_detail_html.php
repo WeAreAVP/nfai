@@ -191,7 +191,7 @@ if (!$this->request->isAjax()) {
 	$this->setVar('other_paging_parameters', array(
 		'entity_id' => $vn_entity_id
 	));
-	print $this->render('related_objects_grid.php');
+//	print $this->render('related_objects_grid.php');
 	
 if (!$this->request->isAjax()) {
 ?>
@@ -201,3 +201,46 @@ if (!$this->request->isAjax()) {
 <?php
 }
 ?>
+<div class="clearfix"></div><div class="all-children">
+	<?php 
+	$t_object = new ca_objects();
+	$t_occ	= $this->getVar('t_item');
+	$va_objects = $t_occ->get("ca_objects", array( "returnAsArray" => 1, 'checkAccess' => $va_access_values));
+	if(sizeof($va_objects)>0)
+	{
+		print "<div style='border-bottom: 2px solid #696969;'><h1 style='color:#3D3D3D;'>Collections & Objects in this ".  unicode_ucfirst($this->getVar('typename')) ."</h1></div>";
+		print "<table class='table hierarchy-table tablesorter'>";
+		print "<thead><tr><th></th><th>Title</th><th>Type</th></tr></thead>";
+		foreach ($va_objects as $va_child){
+			print "<tr>";
+		$child_idno = $va_child['object_id'];
+		$the_child = new ca_objects($child_idno);
+		$child_type = $the_child->get('ca_objects.type_id', array('convertCodesToDisplayText' => true));
+
+		# only show the first 5 and have a more link
+
+		$va_rep = $the_child->getPrimaryRepresentation(array('thumbnail', 'medium'), null, array('return_with_access' => $va_access_values));
+		print "<td>";
+		if ($va_rep['urls']['thumbnail'] != '')
+			print "<img src='" . $va_rep['urls']['thumbnail'] . "' style='height:35px;' width='50' />";
+		else
+			print "<img src='" . $this->request->getThemeUrlPath() . "/graphics/no-image.png' width='40'  style='padding-left:5px;' >";
+
+		# only show the first 5 and have a more link
+
+		print "</td>";
+		print "<td>" . caNavLink($this->request, $va_child['name'] . " ", '', 'Detail', 'Object', 'Show', array('object_id' => $va_child['object_id'])) . "</td>";
+		print "<td>" . $child_type . "</td>";
+		print "</tr>";
+		}
+		print "</table><!-- end unit -->";
+	}
+	?>
+</div>
+<script type="text/javascript">
+$(document).ready(function() 
+    { 
+        $(".table").tablesorter({headers: { 0: { sorter: false}}}); 
+    } 
+); 
+</script>

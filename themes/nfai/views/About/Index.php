@@ -5,8 +5,8 @@
 <script type="text/javascript">
 	var caUIBrowsePanel = caUI.initBrowsePanel({facetUrl: '<?php print caNavUrl($this->request, '', 'Browse', 'getFacet'); ?>'});
 </script>
-<h1 style="line-height: 1.8em;word-spacing: 4px">The National Folklore Archives Initiative (NFAI) is an American Folklore Society- managed effort to document and provide access to information about folklore archival collections.</h1>
-<div class="textContent">
+<h1 style="line-height: 1.8em;word-spacing: 4px;color: #3D3D3D;">The National Folklore Archives Initiative (NFAI) is an American Folklore Society- managed effort to document and provide access to information about folklore archival collections.</h1>
+<div class="textContent aboutContent">
 <!--	<p>The National Folklore Archives Initiative (NFAI) is an American
 Folklore Society-managed effort to document and provide access to
 information about folklore archival collections held by folklore

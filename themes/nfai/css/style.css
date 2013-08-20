@@ -8,8 +8,8 @@
 .splash-feature{
 	border-bottom: 1px solid black;
 	-moz-box-shadow: 0px 1px 0px #888;
--webkit-box-shadow: 0px 1px 0px #888;
-box-shadow: 0px 1px 0px #888;
+	-webkit-box-shadow: 0px 1px 0px #888;
+	box-shadow: 0px 1px 0px #888;
 }
 .splash-css{
 	color: #7e7e7e;
@@ -21,4 +21,13 @@ box-shadow: 0px 1px 0px #888;
 }
 div.searchlight-balloon{
 	border: 1px solid #DDD;
+}
+.hierarchy-table th, .table td{
+border-top: none;
+}
+.aboutContent p {
+	color:#3D3D3D !important;
+}
+.aboutContent a {
+	color:#3D3D3D !important;
 }

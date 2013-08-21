@@ -31,6 +31,7 @@ $vs_facet_name = $this->getVar('facet_name');
 $va_facet_info = $this->getVar('facet_info');
 
 $va_types = $this->getVar('type_list');
+
 $va_relationship_types = $this->getVar('relationship_type_list');
 
 $vb_individual_group_display = (bool) $this->getVar('individual_group_display');
@@ -332,8 +333,8 @@ if (isset($va_facet_info['groupings']) && is_array($va_facet_info['groupings']) 
 						<?php
 						foreach ($va_items as $va_item)
 						{
+							
 							$vs_label = caGetLabelForDisplay($va_facet, $va_item, $va_facet_info);
-
 							$va_row[] = "<div style='padding:10px;'>" . caNavLink($this->request, $vs_label, 'browseSelectPanelLink', $this->request->getModulePath(), $this->request->getController(), ((strlen($vm_modify_id) > 0) ? 'modifyCriteria' : 'addCriteria'), array('facet' => $vs_facet_name, 'id' => $va_item['id'], 'mod_id' => $vm_modify_id)) . "</div>";
 
 //						if (sizeof($va_row) == 5) {

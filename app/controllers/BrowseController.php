@@ -346,7 +346,7 @@ class BrowseController extends BaseBrowseController
 
 		if ($this->opn_type_restriction_id = $this->opo_result_context->getTypeRestriction($pb_type_restriction_has_changed))
 		{
-			$_GET['type_id'] = $this->opn_type_restriction_id;		// push type_id into globals so breadcrumb trail can pick it up
+			$_GET['type_id'] = $this->opn_type_restriction_id;  // push type_id into globals so breadcrumb trail can pick it up
 			$this->opb_type_restriction_has_changed = $pb_type_restriction_has_changed; // get change status
 		}
 	}
@@ -420,12 +420,67 @@ class BrowseController extends BaseBrowseController
 		parent::getFacet($pa_options);
 	}
 
+	public function getAllCollections()
+	{
+		$o_db = new Db();
+		$qr_res = $o_db->query("SELECT o.*
+					FROM ca_objects o
+					WHERE o.type_id=21
+					and o.deleted=0 and o.status=0");
+		while ($qr_res->nextRow())
+		{
+			$i ++;
+			$record = $qr_res->getRow();
+			$collection = new ca_objects($record['object_id']);
+			echo $collection->get('ca_objects.preferred_labels.name');
+			echo '<br/>';
+			echo $collection->getTypeName();
+			echo '<br/>';
+//      print "GOT ACCESSION NUM=".$qr_res->getRow()."<br/>\n";
+		}
+	}
+
 	public function test()
 	{
-		$t_object = new ca_objects();
-			new ObjectBrowse();
-		$va_objects = $t_object->get("ca_objects", array( "returnAsArray" => 1));
-		echo '<pre>';print_r($va_objects);exit;
+		echo '<pre>';
+		$o_db = new Db();
+		$qr_res = $o_db->query("
+					SELECT o.*
+					FROM ca_objects o
+					WHERE o.type_id=21
+					and o.deleted=0 and o.status=0
+				");
+		$i = 0;
+		while ($qr_res->nextRow())
+		{
+			$i ++;
+			$record = $qr_res->getRow();
+			$collection = new ca_objects($record['object_id']);
+			echo $collection->get('ca_objects.preferred_labels.name');
+			echo '<br/>';
+			echo $collection->getTypeName();
+			echo '<br/>';
+//      print "GOT ACCESSION NUM=".$qr_res->getRow()."<br/>\n";
+		}
+		echo $i;
+		exit;
+
+
+		$va_facet = $this->opo_browse->getFacet('collection_facet', array('sort' => 'name', 'checkAccess' => 1));
+		$states = array();
+		foreach ($va_facet as $collections)
+		{
+			$object_id = $collections['object_id'];
+//			echo $object_id.'<br/>';
+			$t_object = new ca_objects($object_id);
+			$states[] = $t_object->get('ca_occurrences.repository_state', array('convertCodesToDisplayText' => true));
+		}
+//		$t_object = new ca_objects(5);
+//			$facet='collection_facet';
+//		$place=$t_object->get('ca_occurrences.repository_state', array('convertCodesToDisplayText' => true));
+		echo '<pre>';
+		print_r($states);
+		exit;
 //		$o_data = new Db();
 // $qr_result = $o_data->query("
 //    SELECT * 
@@ -451,7 +506,9 @@ class BrowseController extends BaseBrowseController
 //      print "GOT ACCESSION NUM=".$qr_res->getRow()."<br/>\n";
 // }exit;
 		$t_object = new ca_objects(5);   // load ca_object record with object_id = 40
-		echo '<pre>';print_r($t_object->get('ca_occurrences.repository_state', array('convertCodesToDisplayText' => true)));exit;
+		echo '<pre>';
+		print_r($t_object->get('ca_occurrences.repository_state', array('convertCodesToDisplayText' => true)));
+		exit;
 //		print "The title of the object is ".$t_object->get('ca_objects.georeference')."<br/>\n";    // get the preferred name of the object
 //		echo '<pre>';print_r($t_object);
 //		exit;

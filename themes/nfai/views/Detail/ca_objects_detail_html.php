@@ -699,8 +699,8 @@ if (sizeof($va_children) > 0)
 	print "<div style='border-bottom: 2px solid #696969;'><h1 style='color:#3D3D3D;'>Objects in this ".  unicode_ucfirst($this->getVar('typename')) ."</h1></div>";
 	$i = 0;
 	
-	print "<table class='table hierarchy-table tablesorter'>";
-	print "<thead><tr><th></th><th>Title</th><th>Type</th></tr></thead>";
+	print "<table class='table hierarchy-table'>";
+	print "<thead><tr><th style='text-align: center;'>Title</th><th>Type</th></tr></thead>";
 	foreach ($va_children as $va_child)
 	{
 		print "<tr>";
@@ -713,17 +713,17 @@ if (sizeof($va_children) > 0)
 		$va_rep = $the_child->getPrimaryRepresentation(array('thumbnail', 'medium'), null, array('return_with_access' => $va_access_values));
 		print "<td>";
 		if ($va_rep['urls']['thumbnail'] != '')
-			print "<img src='" . $va_rep['urls']['thumbnail'] . "' style='height:35px;' width='50' />";
+			print "<img src='" . $va_rep['urls']['thumbnail'] . "' style='height:35px;padding-right:20px;float:left;' width='50' />";
 		else
-			print "<img src='" . $this->request->getThemeUrlPath() . "/graphics/no-image.png' width='40'  style='padding-left:5px;' >";
+			print "<div style='height:35px;width:50px;padding-left:5px;padding-right:20px;float:left;' ></div>";
 
 		# only show the first 5 and have a more link
 
-		print "</td>";
-		print "<td>" . caNavLink($this->request, $va_child['name'] . " ", '', 'Detail', 'Object', 'Show', array('object_id' => $va_child['object_id'])) . "</td>";
+		
+		print  "<div style='padding-left:64px;'>".caNavLink($this->request, $va_child['name'] . " ", '', 'Detail', 'Object', 'Show', array('object_id' => $va_child['object_id'])) . "</div></td>";
 		print "<td>" . $child_type . "</td>";
 		print "</tr>";
-		getAllChildrens($the_child, $this->request);
+		getAllChildrens($the_child, $this->request,25);
 		$i ++;
 
 //					exit;
@@ -734,7 +734,7 @@ if (sizeof($va_children) > 0)
 
 print "</div>";
 
-function getAllChildrens($t_object, $request_url)
+function getAllChildrens($t_object, $request_url,$padding)
 {
 	$va_children = $t_object->get("ca_objects.children.preferred_labels", array('returnAsArray' => 1, 'checkAccess' => $va_access_values));
 	if (sizeof($va_children) > 0)
@@ -750,19 +750,18 @@ function getAllChildrens($t_object, $request_url)
 			$child_type = $the_child->get('ca_objects.type_id', array('convertCodesToDisplayText' => true));
 
 			$va_rep = $the_child->getPrimaryRepresentation(array('thumbnail', 'medium'), null, array('return_with_access' => $va_access_values));
-			print "<td>";
+			print "<td style='padding-left:".$padding."px;'>";
 			if ($va_rep['urls']['thumbnail'] != '')
-				print "<img src='" . $va_rep['urls']['thumbnail'] . "' style='height:35px;' width='50' />";
+				print "<img src='" . $va_rep['urls']['thumbnail'] . "' style='height:35px;padding-right:20px;float:left;' width='50'/>";
 			else
-				print "<img src='" . $request_url->getThemeUrlPath() . "/graphics/no-image.png' width='40'  style='padding-left:5px;' >";
+				print "<div style='height:35px;width:50px;padding-left:5px;padding-right:20px;float:left;' ></div>";
 
 			# only show the first 5 and have a more link
 
-			print "</td>";
-			print "<td>" . caNavLink($request_url, $va_child['name'] . " ", '', 'Detail', 'Object', 'Show', array('object_id' => $va_child['object_id'])) . "</td>";
+			print  "<div style='padding-left:64px;'>".caNavLink($request_url, $va_child['name'] . " ", '', 'Detail', 'Object', 'Show', array('object_id' => $va_child['object_id'])) . "</div></td>";
 			print "<td>" . $child_type . "</td>";
 			print "</tr>";
-			getAllChildrens($the_child, $request_url);
+			getAllChildrens($the_child, $request_url,$padding+25);
 			$i ++;
 
 //					exit;
@@ -770,10 +769,3 @@ function getAllChildrens($t_object, $request_url)
 	}
 }
 ?>
-<script type="text/javascript">
-$(document).ready(function() 
-    { 
-        $(".table").tablesorter({headers: { 0: { sorter: false}}}); 
-    } 
-); 
-</script>

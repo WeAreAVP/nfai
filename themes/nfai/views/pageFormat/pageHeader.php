@@ -5,11 +5,11 @@
 			@font-face {
 				font-family: 'Conv_Aller';
 				src: url('<?php print $this->request->getThemeUrlPath(true); ?>/css/fonts/Aller_Bd.ttf');
-				
+
 				font-weight: normal;
 				font-style: normal;
 			}
-			
+
 			@font-face {
 				font-family: 'HelveticaNeueLight';
 				src: url('<?php print $this->request->getThemeUrlPath(true); ?>/css/fonts/HelveticaNeueLight.ttf');
@@ -195,9 +195,10 @@
 					if (strstr($vs_base_url, 'About/Index'))
 						$class = 'active';
 					?>
-					<li class="<?php echo $class; ?>"><?php print join(" ", $this->getVar('nav')->getHTMLMenuBarAsLinkArray());
-					print $this->getVar('about');
-					?></li>
+					<li class="<?php echo $class; ?>"><?php
+						print join(" ", $this->getVar('nav')->getHTMLMenuBarAsLinkArray());
+						print $this->getVar('about');
+						?></li>
 				</ul>
 			</div>
 		</div>
@@ -211,11 +212,12 @@
 							</button>
 							<ul class="dropdown-menu">
 
+								<!--<li><a href="#myModal" role="button"  data-toggle="modal" data-backdrop="static" onclick="getAllCollections();">Collection</a></li>--> 
 								<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("collection_facet");'>Collection</a></li> 
 								<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("occurrence_facet_103");'>Repository</a></li>
 
 								<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("entity_facet");'>Individual, Organization<br/> or Meeting</a></li>
-								<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("lchs_facet");'>Subject</a></li>
+								<!--<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("lchs_facet");'>Subject</a></li>--> 
 							</ul>
 						</div>
 					</div>
@@ -249,3 +251,31 @@
 			?>
 						</div> end nav -->
 			<hr style="margin: 16px 0 2px 0;"/>
+			<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h3 id="myModalLabel">Modal header</h3>
+				</div>
+				<div class="modal-body">
+					<p>One fine body…</p>
+				</div>
+				<div class="modal-footer">
+					<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+
+				</div>
+			</div>
+			<script type="text/javascript">
+			function getAllCollections() {
+				$.ajax({
+					type: 'GET',
+					url: '/index.php/Browse' + page,
+					data: $('#form_search').serialize(),
+					success: function(result, textStatus, request)
+					{
+
+
+					}
+
+				});
+			}
+			</script>

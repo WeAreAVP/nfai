@@ -185,7 +185,7 @@
 			}
 			?>
 		</div><!-- end topbar -->
-		<div class="navbar" style="width: 920px;margin: 0 auto;">
+		<div class="navbar" style="width: 940px;margin: 0 auto;">
 			<div class="navbar-inner">
 				<a class="brand" href="/">American Folklore Society</a>
 				<ul class="nav pull-right">
@@ -212,16 +212,17 @@
 							</button>
 							<ul class="dropdown-menu">
 
-								<!--<li><a href="#myModal" role="button"  data-toggle="modal" data-backdrop="static" onclick="getAllCollections();">Collection</a></li>--> 
-								<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("collection_facet");'>Collection</a></li> 
-								<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("occurrence_facet_103");'>Repository</a></li>
+								<li><a href="#collectionModal" role="button"  data-toggle="modal" data-backdrop="static" onclick="getAllCollections();">Collection</a></li> 
+								<li><a href="#occuranceModal" role="button"  data-toggle="modal" data-backdrop="static" onclick="getAllRepository();">Repository</a></li> 
+								<li><a href="#entitiesModal" role="button"  data-toggle="modal" data-backdrop="static" onclick="getAllEntities();">Individual, Organization<br/> or Meeting</a></li> 
 
-								<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("entity_facet");'>Individual, Organization<br/> or Meeting</a></li>
-								<!--<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("lchs_facet");'>Subject</a></li>--> 
+								<!--<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("occurrence_facet_103");'>Repository</a></li>-->
+								<!--<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("entity_facet");'>Individual, Organization<br/> or Meeting</a></li>-->
+
 							</ul>
 						</div>
 					</div>
-					<div>
+					<div class="pull-right">
 						<form name="header_search" action="<?php print caNavUrl($this->request, '', 'Search', 'Index'); ?>" method="get">
 							<b class="custom-search splash-css">SEARCH:</b> <input type="text" class="span8" value="<?php print ($vs_search) ? $vs_search : ''; ?>" name="search"  id="quickSearch"  autocomplete="off"  onclick='jQuery("#quickSearch").select();' />
 
@@ -251,13 +252,92 @@
 			?>
 						</div> end nav -->
 			<hr style="margin: 16px 0 2px 0;"/>
-			<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+			<div id="collectionModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h3 id="myModalLabel">Modal header</h3>
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h1 id="myModalLabel">Browse Collections</h1>
 				</div>
-				<div class="modal-body">
-					<p>One fine body…</p>
+				<div class="modal-body" style="height: 300px;overflow: hidden;">
+					<div id="collection_states_list" class="hide">
+						<div style="margin-left: 10px;">
+							<div style="float:left;margin: 10px 10px 0 0;color:#424242;"><b>Filter By:</b></div>
+							<div class="btn-group">
+								<button class="btn" style="color:#595959;">State</button>
+								<button class="btn dropdown-toggle" style="padding-bottom: 12px;" data-toggle="dropdown">
+									<span class="caret"></span>
+								</button>
+								<div class="dropdown-menu" >
+									<div id="collection_states_records" style="height: 100px;overflow: scroll;">
+										<?php
+										$states = caGetStateList();
+										foreach ($states['US'] as $key => $value)
+										{
+											print '<div style="color:#424242;line-height:2.0em;font-size:12px;"><input type="checkbox" style="padding-top: 0;margin-top: -5px;margin-left: 8px;" value="' . $value . '" onclick="filterRecords(\'collection\');"/><span style="display:inline;padding: 3px 12px;" href="javascript://;">' . $key . '</span></div>';
+										}
+										?>
+									</div>
+									<div class="divider" style="margin: 0px 0px 4px 0px;"></div>
+									<div><a onclick="filterRecords('collection', 1);" href="javascript://;" style="padding: 0px 17px;font-size: 13px;line-height: 2em;color:#0088cc;">Clear</a></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="collection_append" style="max-height: 270px;overflow-y: auto;margin-top: 10px;">Loading...</div>
+					<div id="collection_no_result" class="hide no-result">No Result</div>
+				</div>
+				<div class="modal-footer">
+					<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+
+				</div>
+			</div>
+			<div id="occuranceModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h1>Browse Repositories</h1>
+				</div>
+				<div class="modal-body" style="height: 300px;overflow: hidden;">
+					<div id="occurance_states_list" class="hide">
+						<div style="margin-left: 10px;">
+							<div style="float:left;margin: 10px 10px 0 0;color:#424242;"><b>Filter By:</b></div>
+							<div class="btn-group">
+								<button class="btn"  style="color:#595959;">State</button>
+								<button class="btn dropdown-toggle" style="padding-bottom: 12px;" data-toggle="dropdown">
+									<span class="caret"></span>
+								</button>
+								<div class="dropdown-menu" >
+									<div id="occurance_states_records" style="height: 100px;overflow: scroll;">
+										<?php
+										$states = caGetStateList();
+										foreach ($states['US'] as $key => $value)
+										{
+											print '<div style="color:#424242;line-height:2.0em;font-size:12px;"><input type="checkbox" style="padding-top: 0;margin-top: -5px;margin-left: 8px;" value="' . $value . '" onclick="filterRecords(\'occurance\');"/><span style="display:inline;padding: 3px 12px;" href="javascript://;">' . $key . '</span></div>';
+										}
+										?>
+									</div>
+									<div class="divider" style="margin: 0px 0px 4px 0px;"></div>
+									<div><a onclick="filterRecords('occurance', 1);" href="javascript://;" style="padding: 0px 17px;font-size: 13px;line-height: 2em;color:#0088cc;">Clear</a></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="occurance_append" style="max-height: 270px;overflow-y: auto;margin-top: 10px;">Loading...</div>
+					<div id="occurance_no_result" class="hide no-result">No Result</div>
+				</div>
+				<div class="modal-footer">
+					<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+
+				</div>
+			</div>
+			<div id="entitiesModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h1>Browse Individuals, Organizations or Meetings</h1>
+				</div>
+				<div class="modal-body" style="height: 300px;">
+
+					<div id="entities_append">Loading...</div>
+
 				</div>
 				<div class="modal-footer">
 					<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -265,17 +345,96 @@
 				</div>
 			</div>
 			<script type="text/javascript">
+			var isOpenCollectionModal = 0;
+			var isOpenRepositoryModal = 0;
+			var isOpenEntitiesModal = 0;
 			function getAllCollections() {
-				$.ajax({
-					type: 'GET',
-					url: '/index.php/Browse' + page,
-					data: $('#form_search').serialize(),
-					success: function(result, textStatus, request)
-					{
+				if (isOpenCollectionModal == 0) {
+					$.ajax({
+						type: 'GET',
+						url: '/index.php/Browse/getAllCollections',
+//					data: $('#form_search').serialize(),
+						dataType: 'json',
+						success: function(result, textStatus, request)
+						{
+							$('#collection_append').html('');
+							for (cnt in result) {
+//							console.log(result[cnt].id);
+								$('#collection_append').append('<div style="padding:10px;font-size: 15px;" class="' + result[cnt].place + '">' + result[cnt].name + '</div>');
+								$('#collection_states_list').show();
+							}
+							isOpenCollectionModal = 1;
+//					console.log(result);
+						}
 
-
-					}
-
-				});
+					});
+				}
 			}
+			function getAllRepository() {
+				if (isOpenRepositoryModal == 0) {
+					$.ajax({
+						type: 'GET',
+						url: '/index.php/Browse/getAllRepository',
+//					data: $('#form_search').serialize(),
+						dataType: 'json',
+						success: function(result, textStatus, request)
+						{
+							$('#occurance_append').html('');
+							for (cnt in result) {
+								$('#occurance_append').append('<div style="padding:10px;font-size: 15px;" class="' + result[cnt].place + '">' + result[cnt].name + '</div>');
+								$('#occurance_states_list').show();
+							}
+							isOpenRepositoryModal = 1;
+
+						}
+
+					});
+				}
+			}
+			function getAllEntities() {
+				if (isOpenEntitiesModal == 0) {
+					$.ajax({
+						type: 'GET',
+						url: '/index.php/Browse/getAllEntities',
+//					data: $('#form_search').serialize(),
+						dataType: 'json',
+						success: function(result, textStatus, request)
+						{
+							$('#entities_append').html('');
+							for (cnt in result) {
+								$('#entities_append').append('<div style="padding:10px;font-size: 15px;">' + result[cnt].name + '</div>');
+
+							}
+							isOpenEntitiesModal = 1;
+
+						}
+
+					});
+				}
+			}
+			function filterRecords(type, clear) {
+				if (clear == 1) {
+					$("#" + type + "_states_list input").prop("checked", false);
+				}
+				if ($("#" + type + "_states_list input:checked").length == 0) {
+					$('#' + type + '_append div').removeClass('hide');
+				}
+				else {
+					$('#' + type + '_append div').removeClass('hide');
+					$('.NaN').addClass('hide');
+					$("#" + type + "_states_list input:checkbox:not(:checked)").each(function() {
+						$('.' + $(this).val()).addClass('hide');
+
+					});
+
+				}
+				if ($('#' + type + '_append div:not(.hide)').length == 0)
+					$('#' + type + '_no_result').show();
+				else
+					$('#' + type + '_no_result').hide();
+
+			}
+			$('.dropdown-menu div').click(function(e) {
+				e.stopPropagation();
+			});
 			</script>

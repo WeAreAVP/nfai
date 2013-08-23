@@ -34,6 +34,7 @@ require_once(__CA_LIB_DIR__ . "/ca/Browse/PlaceBrowse.php");
 require_once(__CA_LIB_DIR__ . "/ca/Browse/CollectionBrowse.php");
 require_once(__CA_LIB_DIR__ . "/ca/Browse/OccurrenceBrowse.php");
 require_once(__CA_LIB_DIR__ . '/core/GeographicMap.php');
+require_once(__CA_MODELS_DIR__ . "/ca_entities.php");
 
 class BrowseController extends BaseBrowseController
 {
@@ -420,24 +421,189 @@ class BrowseController extends BaseBrowseController
 		parent::getFacet($pa_options);
 	}
 
+	public function abc()
+	{
+		$o_db = new Db();
+		$object_result = $o_db->query("SELECT o.object_id,ol.name
+					FROM ca_objects o
+					INNER JOIN ca_object_labels ol ON ol.object_id=o.object_id AND ol.is_preferred=1
+					WHERE o.deleted=0 AND o.status=0 AND o.access !=0
+					ORDER BY ol.name_sort
+					");
+		$object_array = array();
+		while ($object_result->nextRow())
+		{
+			$record = $object_result->getRow();
+			$object_array[] = $record['object_id'];
+		}
+		$this->view->setVar('collection_list', $object_array);
+		$collection_result = $o_db->query("SELECT o.object_id,ol.name
+					FROM ca_objects o
+					INNER JOIN ca_object_labels ol ON ol.object_id=o.object_id AND ol.is_preferred=1
+					WHERE o.type_id=21
+					AND o.deleted=0 AND o.status=0 AND o.access !=0
+					ORDER BY ol.name_sort
+					LIMIT 7");
+		$i = 0;
+		$collection = '';
+
+		while ($collection_result->nextRow())
+		{
+			if ($i < 6)
+			{
+				$record = $collection_result->getRow();
+
+				$collection .= "<div><div style='float:left;'><input type='checkbox' name='collection[]' val='{$record['object_id']}'/></div><div style='margin-left: 20px;'>{$record['name']}</div></div>";
+			}
+
+			$i ++;
+		}
+		$this->view->setVar('collection', $collection);
+
+		$occurrences_result = $o_db->query("SELECT o.occurrence_id,ol.name
+								FROM ca_occurrences o
+								INNER JOIN ca_occurrence_labels ol ON ol.occurrence_id =o.occurrence_id AND ol.is_preferred =1
+								WHERE o.deleted=0 AND o.status=0 AND o.access !=0
+								ORDER BY ol.name_sort
+								LIMIT 7");
+		$i = 0;
+		$occurrence = '';
+		while ($occurrences_result->nextRow())
+		{
+			if ($i < 6)
+			{
+				$record = $occurrences_result->getRow();
+				$occurrence .= "<div><div style='float:left;'><input type='checkbox' name='occurrence[]' val='{$record['occurrence_id']}'/></div><div style='margin-left: 20px;'>{$record['name']}</div></div>";
+			}
+			$i ++;
+		}
+		$this->view->setVar('occurrence', $occurrence);
+		$entity_result = $o_db->query("
+				SELECT o.`entity_id` , ol.displayname
+				FROM ca_entities o
+				INNER JOIN ca_entity_labels ol ON ol.entity_id = o.entity_id AND ol.is_preferred =1
+				WHERE o.deleted =0
+				AND o.status =0
+				AND o.access !=0
+				ORDER BY ol.name_sort
+				LIMIT 7");
+
+		$i = 0;
+		$entity = '';
+		while ($entity_result->nextRow())
+		{
+			if ($i < 6)
+			{
+				$record = $entity_result->getRow();
+				$entity .= "<div><div style='float:left;'><input type='checkbox' name='entity[]' val='{$record['entity_id']}'/></div><div style='margin-left: 20px;'>{$record['displayname']}</span></div></div>";
+			}
+			$i ++;
+		}
+
+		$this->view->setVar('entity', $entity);
+
+
+
+		$this->render("Browse/browse_facet_html.php");
+	}
+
+	/**
+	 * Get all collection list to show in modal popup.
+	 * @author Nouman Tayyab <nouman@avpreserve.com>
+	 */
 	public function getAllCollections()
 	{
 		$o_db = new Db();
-		$qr_res = $o_db->query("SELECT o.*
+		$qr_res = $o_db->query("SELECT o.object_id
 					FROM ca_objects o
+					INNER JOIN ca_object_labels ol ON ol.object_id=o.object_id AND ol.is_preferred=1
 					WHERE o.type_id=21
-					and o.deleted=0 and o.status=0");
+					AND o.deleted=0 AND o.status=0 AND o.access !=0
+					ORDER BY ol.name_sort");
+		$object = array();
+		$states = caGetStateList();
 		while ($qr_res->nextRow())
 		{
-			$i ++;
+
 			$record = $qr_res->getRow();
 			$collection = new ca_objects($record['object_id']);
-			echo $collection->get('ca_objects.preferred_labels.name');
-			echo '<br/>';
-			echo $collection->getTypeName();
-			echo '<br/>';
-//      print "GOT ACCESSION NUM=".$qr_res->getRow()."<br/>\n";
+			$collection_state = $collection->get('ca_occurrences.repository_state', array('convertCodesToDisplayText' => true, 'returnAsArray' => 1));
+			$place = '';
+			foreach ($collection_state as $state_val)
+			{
+				$place .=' ' . $states['US'][$state_val['repository_state']];
+			}
+
+			$object[] = array('id' => $record['object_id'],
+				'name' => $collection->get('ca_objects.preferred_labels.name'),
+				'place' => ((trim($place))) ? $place : 'NaN');
 		}
+		echo json_encode($object);
+		exit;
+	}
+
+	/**
+	 * Get all occurances list to show in modal popup.
+	 * @author Nouman Tayyab <nouman@avpreserve.com>
+	 */
+	public function getAllRepository()
+	{
+		$o_db = new Db();
+		$qr_res = $o_db->query("SELECT o.occurrence_id
+								FROM ca_occurrences o
+								INNER JOIN ca_occurrence_labels ol ON ol.occurrence_id =o.occurrence_id AND ol.is_preferred =1
+								WHERE o.deleted=0 AND o.status=0 AND o.access !=0
+								ORDER BY ol.name_sort");
+		$repository = array();
+		$states = caGetStateList();
+		while ($qr_res->nextRow())
+		{
+			$record = $qr_res->getRow();
+			$occurance = new ca_occurrences($record['occurrence_id']);
+			$occurance_state = $occurance->get('ca_occurrences.repository_state', array('convertCodesToDisplayText' => true, 'returnAsArray' => 1));
+			$place = '';
+			foreach ($occurance_state as $state_val)
+			{
+				$place .=' ' . $states['US'][$state_val['repository_state']];
+			}
+			$repository[] = array('id' => $record['occurrence_id'],
+				'name' => $occurance->get('ca_occurrences.preferred_labels.name'),
+				'place' => ((trim($place))) ? $place : 'NaN');
+		}
+
+		echo json_encode($repository);
+		exit;
+	}
+
+	/**
+	 * Get all entities list to show in modal popup.
+	 * @author Nouman Tayyab <nouman@avpreserve.com>
+	 */
+	public function getAllEntities()
+	{
+		$o_db = new Db();
+		$qr_res = $o_db->query("
+				SELECT o.`entity_id` , ol.displayname
+				FROM ca_entities o
+				INNER JOIN ca_entity_labels ol ON ol.entity_id = o.entity_id AND ol.is_preferred =1
+				WHERE o.deleted =0
+				AND o.status =0
+				AND o.access !=0
+				ORDER BY ol.name_sort");
+		//address.stateprovince
+		$entities = array();
+		while ($qr_res->nextRow())
+		{
+			$record = $qr_res->getRow();
+//			$entity=  ca_entities( $record['entity_id']);
+			$entities[] = array('id' => $record['entity_id'],
+				'name' => $record['displayname'],
+//				'place'=> $entity->get('ca_entities.preferred_labels.name')
+			);
+		}
+
+		echo json_encode($entities);
+		exit;
 	}
 
 	public function test()

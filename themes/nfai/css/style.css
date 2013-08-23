@@ -23,11 +23,60 @@ div.searchlight-balloon{
 	border: 1px solid #DDD;
 }
 .hierarchy-table th, .table td{
-border-top: none;
+	border-top: none;
 }
 .aboutContent p {
 	color:#3D3D3D !important;
 }
 .aboutContent a {
 	color:#3D3D3D !important;
+}
+.no-result{
+	font-size: 20px;
+	text-align: center;
+	margin-top: 100px;
+}
+.search-bar{
+	background-color: #f6f6f6;
+	margin-top: 20px;
+	margin-left: 0px;
+}
+.searchbar-heading{
+	color:#919191;
+	font-weight: bold;
+	font-size: 11px;
+	margin-bottom: 10px;
+}
+.searchbar-title{
+	color: #343434;
+	font-size: 12px;
+	font-weight: bold;
+}
+.searchbar-items{
+	color: #343434;
+	font-size: 11px;
+}
+.searchbar-inner{
+	padding: 10px;
+}
+.searchbar-content{
+	margin-bottom: 10px;
+	
+}
+.searchbar-items input{
+	margin: 0 9px 0 0;
+	
+}
+.searchbar-items div{
+	line-height: 1.8em !important;
+	
+}
+.searchbar-item-more{
+	font-size: 11px;
+	margin-top: 5px;
+}
+.object-list{
+	/*margin-left: 20px;*/
+	width:680px;
+	margin-top: 20px;
 }

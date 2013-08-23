@@ -110,14 +110,14 @@ a.caption:hover{
 /* page structure */
 /* ------------------------------------- */
 #pageArea{
-	width:900px;
+	width:920px;
 	margin: 0px auto 0px auto;
 	background-color:#FFFFFF;
 	padding:0px 10px 10px 10px;
 	min-height: 500px;
 }
 #topBar{
-	width:913px;
+	width:933px;
 	margin: 0px auto 0px auto;
 	text-align:right;
 	padding:20px 7px 0px 0px;
@@ -261,7 +261,7 @@ a.caption:hover{
 	color: #aaa;
 }
 #footer{
-	width: 910px;
+	width: 930px;
 	margin: 0px auto 0px auto;
 	color:#666666;
 	font-size:11px;

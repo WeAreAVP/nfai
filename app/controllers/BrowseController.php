@@ -420,8 +420,12 @@ class BrowseController extends BaseBrowseController
 		}
 		parent::getFacet($pa_options);
 	}
-
-	public function abc()
+	public function facet(){
+		
+		echo '<pre>';print_r($_SESSION['collection']);exit;
+	$this->redirect('/index.php/Browse/Search');
+	}
+	public function Search()
 	{
 		$o_db = new Db();
 		$object_result = $o_db->query("SELECT o.object_id,ol.name
@@ -429,6 +433,7 @@ class BrowseController extends BaseBrowseController
 					INNER JOIN ca_object_labels ol ON ol.object_id=o.object_id AND ol.is_preferred=1
 					WHERE o.deleted=0 AND o.status=0 AND o.access !=0
 					ORDER BY ol.name_sort
+					LIMIT 10
 					");
 		$object_array = array();
 		while ($object_result->nextRow())
@@ -589,7 +594,7 @@ class BrowseController extends BaseBrowseController
 				WHERE o.deleted =0
 				AND o.status =0
 				AND o.access !=0
-				ORDER BY ol.name_sort");
+				ORDER BY ol.displayname");
 		//address.stateprovince
 		$entities = array();
 		while ($qr_res->nextRow())

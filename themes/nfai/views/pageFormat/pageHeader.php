@@ -204,35 +204,43 @@
 		</div>
 		<div id="pageArea">
 			<div id="header">
-				<div>
-					<div class="pull-left"><div class="btn-group">
-							<button class="btn splash-css">Browse By</button>
-							<button class="btn dropdown-toggle" style="padding-bottom: 12px;" data-toggle="dropdown">
-								<span class="caret"></span>
-							</button>
-							<ul class="dropdown-menu">
+				<?php
+				$vs_base_url = $this->request->getRequestUrl();
+				if ( ! strstr($vs_base_url, 'Browse/Search'))
+				{
+					?>
+					<div>
+						<div class="pull-left"><div class="btn-group">
+								<button class="btn splash-css">Browse By</button>
+								<button class="btn dropdown-toggle" style="padding-bottom: 12px;" data-toggle="dropdown">
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu">
 
-								<li><a href="#collectionModal" role="button"  data-toggle="modal" data-backdrop="static" onclick="getAllCollections();">Collection</a></li> 
-								<li><a href="#occuranceModal" role="button"  data-toggle="modal" data-backdrop="static" onclick="getAllRepository();">Repository</a></li> 
-								<li><a href="#entitiesModal" role="button"  data-toggle="modal" data-backdrop="static" onclick="getAllEntities();">Individual, Organization<br/> or Meeting</a></li> 
+									<li><a href="#collectionModal" role="button"  data-toggle="modal" data-backdrop="static" onclick="getAllCollections();">Collection</a></li> 
+									<li><a href="#occuranceModal" role="button"  data-toggle="modal" data-backdrop="static" onclick="getAllRepository();">Repository</a></li> 
+									<li><a href="#entitiesModal" role="button"  data-toggle="modal" data-backdrop="static" onclick="getAllEntities();">Individual, Organization<br/> or Meeting</a></li> 
+									<li><a href="/index.php/Browse/Search" role="button" >General Browse</a></li> 
 
-								<!--<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("occurrence_facet_103");'>Repository</a></li>-->
-								<!--<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("entity_facet");'>Individual, Organization<br/> or Meeting</a></li>-->
+									<!--<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("occurrence_facet_103");'>Repository</a></li>-->
+									<!--<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("entity_facet");'>Individual, Organization<br/> or Meeting</a></li>-->
 
-							</ul>
+								</ul>
+							</div>
+						</div>
+						<div class="pull-right">
+							<form name="header_search" action="<?php print caNavUrl($this->request, '', 'Search', 'Index'); ?>" method="get">
+								<b class="custom-search splash-css">SEARCH:</b> <input type="text" class="span8" value="<?php print ($vs_search) ? $vs_search : ''; ?>" name="search"  id="quickSearch"  autocomplete="off"  onclick='jQuery("#quickSearch").select();' />
+
+
+							</form>
+
 						</div>
 					</div>
-					<div class="pull-right">
-						<form name="header_search" action="<?php print caNavUrl($this->request, '', 'Search', 'Index'); ?>" method="get">
-							<b class="custom-search splash-css">SEARCH:</b> <input type="text" class="span8" value="<?php print ($vs_search) ? $vs_search : ''; ?>" name="search"  id="quickSearch"  autocomplete="off"  onclick='jQuery("#quickSearch").select();' />
-
-
-						</form>
-
-					</div>
-				</div>
-				<div class="clearfix"></div>
-				<?php
+					<div class="clearfix"></div>
+					<hr style="margin: 16px 0 2px 0;"/>
+					<?php
+				}
 //				print caNavLink($this->request, "<img src='".$this->request->getThemeUrlPath()."/graphics/".$this->request->config->get('header_img')."' border='0'>", "", "", "", "");
 				?>				
 			</div><!-- end header -->
@@ -251,7 +259,7 @@
 			print join(" ", $this->getVar('nav')->getHTMLMenuBarAsLinkArray());
 			?>
 						</div> end nav -->
-			<hr style="margin: 16px 0 2px 0;"/>
+
 
 			<div id="collectionModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 				<div class="modal-header">
@@ -335,9 +343,26 @@
 					<h1>Browse Individuals, Organizations or Meetings</h1>
 				</div>
 				<div class="modal-body" style="height: 300px;">
-
+					<div id="alphatbets_list" class="hide">
+						<div style="margin-left: 10px;">
+							<div style="float:left;margin: 10px 10px 0 0;color:#424242;"><b>Filter By:</b></div>
+							<div class="btn-group">
+								<button class="btn" style="color:#595959;">Alphabets</button>
+								<button class="btn dropdown-toggle" style="padding-bottom: 12px;" data-toggle="dropdown">
+									<span class="caret"></span>
+								</button>
+								<div class="dropdown-menu" >
+									<div id="alphabets_records" style="height: 100px;overflow: scroll;">
+										
+									</div>
+									<div class="divider" style="margin: 0px 0px 4px 0px;"></div>
+									<div><a onclick="alphabetFilter(1);" href="javascript://;" style="padding: 0px 17px;font-size: 13px;line-height: 2em;color:#0088cc;">Clear</a></div>
+								</div>
+							</div>
+						</div>
+					</div>
 					<div id="entities_append">Loading...</div>
-
+					<div id="entities_no_result" class="hide no-result">No Result</div>
 				</div>
 				<div class="modal-footer">
 					<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -360,7 +385,7 @@
 							$('#collection_append').html('');
 							for (cnt in result) {
 //							console.log(result[cnt].id);
-								$('#collection_append').append('<div style="padding:10px;font-size: 15px;" class="' + result[cnt].place + '">' + result[cnt].name + '</div>');
+								$('#collection_append').append('<div style="padding:10px;font-size: 15px;" class="' + result[cnt].place + '"><a href="/index.php/Browse/facet/c/' + result[cnt].id + '">' + result[cnt].name + '</a></div>');
 								$('#collection_states_list').show();
 							}
 							isOpenCollectionModal = 1;
@@ -381,7 +406,7 @@
 						{
 							$('#occurance_append').html('');
 							for (cnt in result) {
-								$('#occurance_append').append('<div style="padding:10px;font-size: 15px;" class="' + result[cnt].place + '">' + result[cnt].name + '</div>');
+								$('#occurance_append').append('<div style="padding:10px;font-size: 15px;" class="' + result[cnt].place + '"><a href="/index.php/Browse/facet/o/' + result[cnt].id + '">' + result[cnt].name + '</a></div>');
 								$('#occurance_states_list').show();
 							}
 							isOpenRepositoryModal = 1;
@@ -401,10 +426,20 @@
 						success: function(result, textStatus, request)
 						{
 							$('#entities_append').html('');
-							for (cnt in result) {
-								$('#entities_append').append('<div style="padding:10px;font-size: 15px;">' + result[cnt].name + '</div>');
 
+							var list = {letters: []};    //object to collect the li elements and a list of initial letters
+							for (cnt in result) {
+								var itmLetter = result[cnt].name.substring(0, 1).toUpperCase();
+								if (!(itmLetter in list)) {
+									list[itmLetter] = [];
+									list.letters.push(itmLetter);
+									$('#alphabets_records').append('<div style="color:#424242;line-height:2.0em;font-size:12px;"><input type="checkbox" style="padding-top: 0;margin-top: -5px;margin-left: 8px;" value="alpha_' + itmLetter +'" onclick="alphabetFilter();"/><span style="display:inline;padding: 3px 12px;" href="javascript://;">' + itmLetter + '</span></div>');
+								}
+								$('#entities_append').append('<div style="padding:10px;font-size: 15px;" class="alpha_'+itmLetter+'"><a  href="/index.php/Browse/facet/e/' + result[cnt].id + '">' + result[cnt].name + '</a></div>');
+//								list[itmLetter].push($(this));    //add li element to the letter's array in the list object
 							}
+							$('#alphatbets_list').show();
+							console.log(list);
 							isOpenEntitiesModal = 1;
 
 						}
@@ -433,6 +468,27 @@
 				else
 					$('#' + type + '_no_result').hide();
 
+			}
+			function alphabetFilter(clear){
+			if (clear == 1) {
+					$("#alphatbets_list input").prop("checked", false);
+				}
+				if ($("#alphatbets_list input:checked").length == 0) {
+					$('#entities_append div').removeClass('hide');
+				}
+				else {
+					$('#entities_append div').removeClass('hide');
+//					$('.NaN').addClass('hide');
+					$("#alphatbets_list input:checkbox:not(:checked)").each(function() {
+						$('.' + $(this).val()).addClass('hide');   
+						console.log($(this).val());
+					});
+
+				}
+				if ($('#entities_append div:not(.hide)').length == 0)
+					$('#entities_no_result').show();
+				else
+					$('#entities_no_result').hide();
 			}
 			$('.dropdown-menu div').click(function(e) {
 				e.stopPropagation();

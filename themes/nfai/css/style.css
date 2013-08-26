@@ -30,6 +30,7 @@ div.searchlight-balloon{
 }
 .aboutContent a {
 	color:#3D3D3D !important;
+	text-decoration: underline !important;
 }
 .no-result{
 	font-size: 20px;
@@ -79,4 +80,10 @@ div.searchlight-balloon{
 	/*margin-left: 20px;*/
 	width:680px;
 	margin-top: 20px;
+}
+#detailBody a,.all-children a,#mycarousel a{
+	text-decoration: underline;
+}
+#entities_append a,#occurance_append a,#collection_append a{
+	text-decoration: underline;
 }

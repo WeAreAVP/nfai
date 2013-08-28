@@ -420,69 +420,249 @@ class BrowseController extends BaseBrowseController
 		}
 		parent::getFacet($pa_options);
 	}
-	public function facet(){
-		
-		echo '<pre>';print_r($_SESSION['collection']);exit;
-	$this->redirect('/index.php/Browse/Search');
+
+	function make_array($value)
+	{
+		return $value['id'];
 	}
-	public function Search()
+
+	public function facet()
+	{
+		$_SESSION['collection'] = array();
+		$_SESSION['entity'] = array();
+		$_SESSION['occurence'] = array();
+		if (isset($_GET['c']) && ! empty($_GET['c']))
+		{
+			$_SESSION['collection'] = array(0 => array('id' => $_GET['c'], 'name' => $_GET['name']));
+		}
+		if (isset($_GET['e']) && ! empty($_GET['e']))
+		{
+			$_SESSION['entity'] = array(0 => array('id' => $_GET['e'], 'name' => $_GET['name']));
+		}
+		if (isset($_GET['o']) && ! empty($_GET['o']))
+		{
+			$_SESSION['occurence'] = array(0 => array('id' => $_GET['o'], 'name' => $_GET['name']));
+		}
+		$this->redirect('/index.php/Browse/Search');
+	}
+
+	public function getItems($object_id, $data = array())
 	{
 		$o_db = new Db();
-		$object_result = $o_db->query("SELECT o.object_id,ol.name
-					FROM ca_objects o
-					INNER JOIN ca_object_labels ol ON ol.object_id=o.object_id AND ol.is_preferred=1
-					WHERE o.deleted=0 AND o.status=0 AND o.access !=0
-					ORDER BY ol.name_sort
-					LIMIT 10
-					");
-		$object_array = array();
+		$object_result = $o_db->query("SELECT o.object_id,ol.name,lt.item_value,orr.media
+						FROM  `ca_objects` o
+						INNER JOIN ca_object_labels ol ON ol.object_id=o.object_id AND ol.is_preferred=1
+						INNER JOIN ca_list_items lt ON lt.item_id=o.type_id 
+						LEFT JOIN  `ca_objects_x_object_representations` oor ON oor.object_id = o.object_id AND oor.is_primary=1
+						LEFT JOIN  `ca_object_representations` orr ON orr.representation_id = oor.representation_id AND orr.deleted=0
+						WHERE o.deleted=0 AND o.status=0 AND o.access !=0 AND o.parent_id={$object_id}
+					    ORDER BY ol.name_sort");
+
 		while ($object_result->nextRow())
 		{
+
 			$record = $object_result->getRow();
-			$object_array[] = $record['object_id'];
+			$data[] = array('id' => $record['object_id'],
+				'id' => $record['object_id'],
+				'name' => $record['name'],
+				'type' => ucfirst($record['item_value']),
+				'thumbnail' => $object_result->getMediaUrl('media', 'thumbnail'),
+				'medium' => $object_result->getMediaUrl('media', 'medium'),
+			);
+
+			$data = $this->getItems($record['object_id'], $data);
 		}
+		return $data;
+	}
+
+	public function Search()
+	{
+		$this->view->setVar('isAjax', FALSE);
+		if ( ! isset($_SESSION['collection']))
+			$_SESSION['collection'] = array();
+		if ( ! isset($_SESSION['entity']))
+			$_SESSION['entity'] = array();
+		if ( ! isset($_SESSION['occurence']))
+			$_SESSION['occurence'] = array();
+		if ($_POST)
+		{
+
+
+			$this->view->setVar('isAjax', TRUE);
+			if (isset($_POST['collection']))
+			{
+				$facet_collection = array();
+				foreach ($_POST['collection'] as $value)
+				{
+					$explode = explode('|||', $value);
+					$facet_collection[] = array('id' => $explode[0], 'name' => $explode[1]);
+				}
+				$_SESSION['collection'] = $facet_collection;
+			}
+
+			if (isset($_POST['entity']))
+			{
+				$facet_entity = array();
+				foreach ($_POST['entity'] as $value)
+				{
+					$explode = explode('|||', $value);
+					$facet_entity[] = array('id' => $explode[0], 'name' => $explode[1]);
+				}
+				$_SESSION['entity'] = $facet_entity;
+			}
+			if (isset($_POST['occurrence']))
+			{
+				$facet_occurence = array();
+				foreach ($_POST['occurrence'] as $value)
+				{
+					$explode = explode('|||', $value);
+					$facet_occurence[] = array('id' => $explode[0], 'name' => $explode[1]);
+				}
+				$_SESSION['occurence'] = $facet_occurence;
+			}
+		}
+		$o_db = new Db();
+		$where = $occurence_join = $entity_join = '';
+		$selectedCollection = $selectedEntity = $selectedOccurrence = array();
+		if (isset($_SESSION['collection']) && count($_SESSION['collection']) > 0)
+		{
+			$search = implode(',', array_map(array($this, 'make_array'), $_SESSION['collection']));
+			$selectedCollection = array_map(array($this, 'make_array'), $_SESSION['collection']);
+			$where = " AND o.object_id IN ({$search})";
+		}
+		if (isset($_SESSION['entity']) && count($_SESSION['entity']) > 0)
+		{
+			$search = implode(',', array_map(array($this, 'make_array'), $_SESSION['entity']));
+			$selectedEntity = array_map(array($this, 'make_array'), $_SESSION['entity']);
+			$entity_join = "INNER JOIN  `ca_objects_x_entities` oe ON oe.object_id = o.object_id AND oe.entity_id IN ({$search})";
+		}
+		if (isset($_SESSION['occurence']) && count($_SESSION['occurence']) > 0)
+		{
+			$search = implode(',', array_map(array($this, 'make_array'), $_SESSION['occurence']));
+			$selectedOccurrence = array_map(array($this, 'make_array'), $_SESSION['occurence']);
+			$occurence_join = " AND oo.occurrence_id IN ({$search})";
+		}
+		$object_result = $o_db->query("SELECT o.object_id,ol.name,lt.item_value,orr.media
+						FROM  `ca_objects` o
+						INNER JOIN ca_object_labels ol ON ol.object_id=o.object_id AND ol.is_preferred=1
+						INNER JOIN ca_list_items lt ON lt.item_id=o.type_id 
+						INNER JOIN  `ca_objects_x_entities` oe ON oe.object_id = o.object_id {$entity_join}
+						INNER JOIN  `ca_objects_x_occurrences` oo ON oo.object_id = o.object_id {$occurence_join}
+						LEFT JOIN  `ca_objects_x_object_representations` oor ON oor.object_id = o.object_id AND oor.is_primary=1
+						LEFT JOIN  `ca_object_representations` orr ON orr.representation_id = oor.representation_id AND orr.deleted=0
+						LEFT JOIN  `ca_object_representation_multifiles` orm ON orm.representation_id = oor.representation_id 
+						WHERE o.deleted=0 AND o.status=0 AND o.access !=0 AND o.type_id=21  {$where}
+					    GROUP BY o.object_id
+						ORDER BY ol.name_sort,o.type_id");
+		$object_array = array();
+
+		while ($object_result->nextRow())
+		{
+
+			$record = $object_result->getRow();
+			$object_array[] = array('id' => $record['object_id'],
+				'id' => $record['object_id'],
+				'name' => $record['name'],
+				'type' => ucfirst($record['item_value']),
+				'thumbnail' => $object_result->getMediaUrl('media', 'thumbnail'),
+				'medium' => $object_result->getMediaUrl('media', 'medium'),
+				'items' => $this->getItems($record['object_id'])
+			);
+		}
+
 		$this->view->setVar('collection_list', $object_array);
 		$collection_result = $o_db->query("SELECT o.object_id,ol.name
 					FROM ca_objects o
 					INNER JOIN ca_object_labels ol ON ol.object_id=o.object_id AND ol.is_preferred=1
 					WHERE o.type_id=21
 					AND o.deleted=0 AND o.status=0 AND o.access !=0
-					ORDER BY ol.name_sort
-					LIMIT 7");
+					ORDER BY ol.name_sort");
 		$i = 0;
 		$collection = '';
+		$collectionModal = '';
+		$moreCollection = FALSE;
 
 		while ($collection_result->nextRow())
 		{
+
+			$record = $collection_result->getRow();
+			$val = htmlentities($record['name']);
+			$checked = '';
+			if (count($selectedCollection) > 0 && in_array($record['object_id'], $selectedCollection))
+				$checked = 'checked="checked"';
 			if ($i < 6)
 			{
-				$record = $collection_result->getRow();
 
-				$collection .= "<div><div style='float:left;'><input type='checkbox' name='collection[]' val='{$record['object_id']}'/></div><div style='margin-left: 20px;'>{$record['name']}</div></div>";
+				$collection .= "<div><div style='float:left;'><input type='checkbox' {$checked} name='collection[]' value='{$record['object_id']}|||{$val}'/></div><div style='margin-left: 20px;'>{$record['name']}</div></div>";
+			}
+			else
+			{
+				$moreCollection = TRUE;
+				$collectionModal .="<div><div style='float:left;'><input {$checked} onclick=\"$('#collectionSearchModal').modal('toggle');\" type='checkbox' name='collection[]' value='{$record['object_id']}|||{$val}'/></div><div style='margin-left: 20px;'>{$record['name']}</div></div>";
 			}
 
 			$i ++;
 		}
+		$collection .='<div id="collectionSearchModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+							<h1 id="myModalLabel">More Collection</h1>
+						</div>
+						<div class="modal-body">' .
+		$collectionModal
+		. '</div>
+						<div class="modal-footer">
+							<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+						</div>
+					</div>';
 		$this->view->setVar('collection', $collection);
+		$this->view->setVar('show_more_collection', $moreCollection);
 
 		$occurrences_result = $o_db->query("SELECT o.occurrence_id,ol.name
 								FROM ca_occurrences o
 								INNER JOIN ca_occurrence_labels ol ON ol.occurrence_id =o.occurrence_id AND ol.is_preferred =1
 								WHERE o.deleted=0 AND o.status=0 AND o.access !=0
-								ORDER BY ol.name_sort
-								LIMIT 7");
+								ORDER BY ol.name_sort");
 		$i = 0;
 		$occurrence = '';
+		$occurrenceModal = '';
+		$moreOccurrence = FALSE;
+
+//		$selectedOccurrence = array_map(array($this, 'make_array'), $_SESSION['occurence']);
 		while ($occurrences_result->nextRow())
 		{
+			$record = $occurrences_result->getRow();
+			$val = htmlentities($record['name']);
+			$checked = '';
+			if (count($selectedOccurrence) > 0 && in_array($record['occurrence_id'], $selectedOccurrence))
+				$checked = 'checked="checked"';
 			if ($i < 6)
 			{
-				$record = $occurrences_result->getRow();
-				$occurrence .= "<div><div style='float:left;'><input type='checkbox' name='occurrence[]' val='{$record['occurrence_id']}'/></div><div style='margin-left: 20px;'>{$record['name']}</div></div>";
+
+				$occurrence .= "<div><div style='float:left;'><input {$checked} type='checkbox' name='occurrence[]' value='{$record['occurrence_id']}|||{$val}'/></div><div style='margin-left: 20px;'>{$record['name']}</div></div>";
 			}
+			else
+			{
+				$moreOccurrence = TRUE;
+				$occurrenceModal .="<div><div style='float:left;'><input {$checked}  onclick=\"$('#occurenceSearchModal').modal('toggle');\" type='checkbox' name='occurrence[]' value='{$record['occurrence_id']}|||{$val}'/></div><div style='margin-left: 20px;'>{$record['name']}</div></div>";
+			}
+
 			$i ++;
 		}
+		$occurrence .='<div id="occurenceSearchModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+							<h1 id="myModalLabel">More Repository</h1>
+						</div>
+						<div class="modal-body">' .
+		$occurrenceModal
+		. '</div>
+						<div class="modal-footer">
+							<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+						</div>
+					</div>';
 		$this->view->setVar('occurrence', $occurrence);
+		$this->view->setVar('show_more_occurrence', $moreOccurrence);
 		$entity_result = $o_db->query("
 				SELECT o.`entity_id` , ol.displayname
 				FROM ca_entities o
@@ -490,25 +670,54 @@ class BrowseController extends BaseBrowseController
 				WHERE o.deleted =0
 				AND o.status =0
 				AND o.access !=0
-				ORDER BY ol.name_sort
-				LIMIT 7");
+				ORDER BY ol.name_sort");
 
 		$i = 0;
 		$entity = '';
+		$entityModal = '';
+		$moreEntity = FALSE;
+
 		while ($entity_result->nextRow())
 		{
+			$record = $entity_result->getRow();
+			$val = htmlentities($record['displayname']);
+			$checked = '';
+			if (count($selectedEntity) > 0 && in_array($record['occurrence_id'], $selectedEntity))
+				$checked = 'checked="checked"';
 			if ($i < 6)
 			{
-				$record = $entity_result->getRow();
-				$entity .= "<div><div style='float:left;'><input type='checkbox' name='entity[]' val='{$record['entity_id']}'/></div><div style='margin-left: 20px;'>{$record['displayname']}</span></div></div>";
+
+				$entity .= "<div><div style='float:left;'><input {$checked} type='checkbox' name='entity[]' value='{$record['entity_id']}|||$val'/></div><div style='margin-left: 20px;'>{$record['displayname']}</span></div></div>";
 			}
+			else
+			{
+				$moreEntity = TRUE;
+				$entityModal .="<div><div style='float:left;'><input {$checked} onclick=\"$('#entitySearchModal').modal('toggle');\" type='checkbox' name='entity[]' value='{$record['entity_id']}|||$val'/></div><div style='margin-left: 20px;'>{$record['displayname']}</span></div></div>";
+			}
+
 			$i ++;
 		}
-
+		$entity .='<div id="entitySearchModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+							<h1 id="myModalLabel">More Individual, Organization, Meeting</h1>
+						</div>
+						<div class="modal-body">' .
+		$entityModal
+		. '</div>
+						<div class="modal-footer">
+							<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+						</div>
+					</div>';
+		$this->view->setVar('show_more_entity', $moreEntity);
 		$this->view->setVar('entity', $entity);
 
 
-
+		if ($_POST)
+		{
+			echo $this->render("Browse/browse_facet_html.php", TRUE);
+			exit;
+		}
 		$this->render("Browse/browse_facet_html.php");
 	}
 

@@ -114,14 +114,14 @@ $va_display_options = $this->getVar('primary_rep_display_options');
 		{
 			print "<div class='unit'><b>" . _t("Identifier") . "</b><br/> " . $t_object->get('idno') . "</div><!-- end unit -->";
 		}
-		if ($va_repository = $t_object->get('ca_occurrences.preferred_labels', array('returnAsArray' => true)))
+		if ($va_repository = $t_object->get('ca_occurrences', array('returnAsArray' => true)))
 		{
-			
+//			echo '<pre>';print_r($va_repository);exit;
 			print "<div class='unit'><b>" . _t("Repository") . "</b><br/> ";
 			foreach ($va_repository as $va_term => $va_metadata)
 			{
-//				print caNavLink($this->request, $va_metadata . " ", '', 'Detail', 'Occurrence', 'Show', array('occurrence_id' => $va_metadata['ca_occurrences.occurrence_id']));
-				print caNavLink($this->request, $va_metadata, '', '', 'Search', 'Index', array('search' => urlencode($va_metadata))) . "<br/>";
+				print caNavLink($this->request, $va_metadata['label'] . " ", '', 'Detail', 'Occurrence', 'Show', array('occurrence_id' => $va_metadata['occurrence_id']));
+//				print caNavLink($this->request, $va_metadata, '', '', 'Search', 'Index', array('search' => urlencode($va_metadata))) . "<br/>";
 			}
 			print "</div>";
 		}

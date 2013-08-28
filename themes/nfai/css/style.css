@@ -87,3 +87,21 @@ div.searchlight-balloon{
 #entities_append a,#occurance_append a,#collection_append a{
 	text-decoration: underline;
 }
+.btn-img{
+    background-color: #FFFFFF !important;
+    border: 1px solid #CCCCCC;
+    padding:7px 7px 6px 10px;
+    border-radius:5px;
+    margin-bottom:10px;
+    float:left;
+    width: 180px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+    margin: 2px 0;
+
+}
+.search_keys{
+    float: left;
+    width: 164px;
+
+}

@@ -86,7 +86,8 @@ if (!$this->request->isAjax()) {
 				print "<div class='unit'><b>"._t("Type of Repository")."</b><br/> ";
 				foreach($va_repository_type as $va_term => $va_metadata) {
 					foreach($va_metadata as $v_i => $va_thing) {
-						print caNavLink($this->request, $va_thing, '', '', 'Search', 'Index', array('search' => urlencode($va_thing)))."<br/>";
+						print $va_thing;
+//						print caNavLink($this->request, $va_thing, '', '', 'Search', 'Index', array('search' => urlencode($va_thing)))."<br/>";
 					}
 				}
 				print "</div>";

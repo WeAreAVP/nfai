@@ -186,8 +186,8 @@
 			?>
 		</div><!-- end topbar -->
 		<div style="width: 940px;margin: 0 auto;background-color: white;">
-			<?php 
-			print caNavLink($this->request, "<img src='".$this->request->getThemeUrlPath()."/graphics/".$this->request->config->get('header_img')."' border='0'>", "", "", "", "");
+			<?php
+			print caNavLink($this->request, "<img src='" . $this->request->getThemeUrlPath() . "/graphics/" . $this->request->config->get('header_img') . "' border='0'>", "", "", "", "");
 			?>
 		</div>
 		<div class="navbar" style="width: 940px;margin: 0 auto;">
@@ -195,46 +195,48 @@
 				<!--<a class="brand" href="/">American Folklore Society</a>-->
 				<div class="pull-left">
 					<div id="">
-				<?php
-				$vs_base_url = $this->request->getRequestUrl();
-				if ( ! strstr($vs_base_url, 'Browse/Search'))
-				{
-					?>
-					<div>
-						<div class="pull-left"><div class="btn-group">
-								<button class="btn splash-css">Browse By</button>
-								<button class="btn dropdown-toggle" style="padding-bottom: 12px;" data-toggle="dropdown">
-									<span class="caret"></span>
-								</button>
-								<ul class="dropdown-menu">
-									<li><a href="/index.php/Browse/Search" role="button" >General Browse</a></li> 
-									<li><a href="#collectionModal" role="button"  data-toggle="modal" data-backdrop="static" onclick="getAllCollections();">Collection</a></li> 
-									<li><a href="#occuranceModal" role="button"  data-toggle="modal" data-backdrop="static" onclick="getAllRepository();">Repository</a></li> 
-									<li><a href="#entitiesModal" role="button"  data-toggle="modal" data-backdrop="static" onclick="getAllEntities();">Individual, Organization<br/> or Meeting</a></li> 
-									
+						<?php
+						$vs_base_url = $this->request->getRequestUrl();
+						if ( ! strstr($vs_base_url, 'Browse/Search'))
+						{
+							?>
+							<div>
+								<div class="pull-left"><div class="btn-group">
+										<button class="btn splash-css">Browse By</button>
+										<button class="btn dropdown-toggle" style="padding-bottom: 12px;" data-toggle="dropdown">
+											<span class="caret"></span>
+										</button>
+										<ul class="dropdown-menu">
+											<li><a href="/index.php/Browse/Search" role="button" >General Browse</a></li> 
+											<li><a href="#collectionModal" role="button"  data-toggle="modal" data-backdrop="static" onclick="getAllCollections();">Collection</a></li> 
+											<li><a href="#occuranceModal" role="button"  data-toggle="modal" data-backdrop="static" onclick="getAllRepository();">Repository</a></li> 
+											<li><a href="#entitiesModal" role="button"  data-toggle="modal" data-backdrop="static" onclick="getAllEntities();">Individual, Organization<br/> or Meeting</a></li> 
 
-									<!--<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("occurrence_facet_103");'>Repository</a></li>-->
-									<!--<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("entity_facet");'>Individual, Organization<br/> or Meeting</a></li>-->
 
-								</ul>
+											<!--<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("occurrence_facet_103");'>Repository</a></li>-->
+											<!--<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("entity_facet");'>Individual, Organization<br/> or Meeting</a></li>-->
+
+										</ul>
+									</div>
+								</div>
+								<div class="pull-right">
+									<!--<form name="header_search" action="<?php print caNavUrl($this->request, '', 'Search', 'Index'); ?>" method="get">-->
+									<b class="custom-search splash-css" style="float: left;margin-top: 14px;">SEARCH:</b> 
+									<!--<input type="text" class="span7" value="<?php print ($vs_search) ? $vs_search : ''; ?>" name="search"  id="quickSearch"  autocomplete="off"  style="margin: 5px 0 0 0;width: 570px;" onclick='jQuery("#quickSearch").select();' />-->
+									<input type="text" class="span7" value="" name="search"  id="quickSearch"  autocomplete="off"  style="margin: 5px 0 0 0;width: 570px;" onkeyup="doSearch(event);" />
+
+
+									<!--</form>-->
+
+								</div>
 							</div>
-						</div>
-						<div class="pull-right">
-							<form name="header_search" action="<?php print caNavUrl($this->request, '', 'Search', 'Index'); ?>" method="get">
-								<b class="custom-search splash-css" style="float: left;margin-top: 14px;">SEARCH:</b> <input type="text" class="span7" value="<?php print ($vs_search) ? $vs_search : ''; ?>" name="search"  id="quickSearch"  autocomplete="off"  style="margin: 5px 0 0 0;width: 570px;" onclick='jQuery("#quickSearch").select();' />
-
-
-							</form>
-
-						</div>
-					</div>
-					<div class="clearfix"></div>
-					<!--<hr style="margin: 16px 0 2px 0;"/>-->
-					<?php
-				}
+							<div class="clearfix"></div>
+							<!--<hr style="margin: 16px 0 2px 0;"/>-->
+							<?php
+						}
 //				print caNavLink($this->request, "<img src='".$this->request->getThemeUrlPath()."/graphics/".$this->request->config->get('header_img')."' border='0'>", "", "", "", "");
-				?>				
-			</div>
+						?>				
+					</div>
 				</div>
 				<ul class="nav pull-right">
 					<?php
@@ -361,7 +363,7 @@
 								</button>
 								<div class="dropdown-menu" >
 									<div id="alphabets_records" style="height: 100px;overflow: scroll;">
-										
+
 									</div>
 									<div class="divider" style="margin: 0px 0px 4px 0px;"></div>
 									<div><a onclick="alphabetFilter(1);" href="javascript://;" style="padding: 0px 17px;font-size: 13px;line-height: 2em;color:#0088cc;">Clear</a></div>
@@ -441,9 +443,9 @@
 								if (!(itmLetter in list)) {
 									list[itmLetter] = [];
 									list.letters.push(itmLetter);
-									$('#alphabets_records').append('<div style="color:#424242;line-height:2.0em;font-size:12px;"><input type="checkbox" style="padding-top: 0;margin-top: -5px;margin-left: 8px;" value="alpha_' + itmLetter +'" onclick="alphabetFilter();"/><span style="display:inline;padding: 3px 12px;" href="javascript://;">' + itmLetter + '</span></div>');
+									$('#alphabets_records').append('<div style="color:#424242;line-height:2.0em;font-size:12px;"><input type="checkbox" style="padding-top: 0;margin-top: -5px;margin-left: 8px;" value="alpha_' + itmLetter + '" onclick="alphabetFilter();"/><span style="display:inline;padding: 3px 12px;" href="javascript://;">' + itmLetter + '</span></div>');
 								}
-								$('#entities_append').append('<div style="padding:10px;font-size: 15px;" class="alpha_'+itmLetter+'"><a  href="/index.php/Browse/facet?e=' + result[cnt].id + '&name=' + encodeURIComponent(result[cnt].name) + '">' + result[cnt].name + '</a></div>');
+								$('#entities_append').append('<div style="padding:10px;font-size: 15px;" class="alpha_' + itmLetter + '"><a  href="/index.php/Browse/facet?e=' + result[cnt].id + '&name=' + encodeURIComponent(result[cnt].name) + '">' + result[cnt].name + '</a></div>');
 //								list[itmLetter].push($(this));    //add li element to the letter's array in the list object
 							}
 							$('#alphatbets_list').show();
@@ -477,8 +479,8 @@
 					$('#' + type + '_no_result').hide();
 
 			}
-			function alphabetFilter(clear){
-			if (clear == 1) {
+			function alphabetFilter(clear) {
+				if (clear == 1) {
 					$("#alphatbets_list input").prop("checked", false);
 				}
 				if ($("#alphatbets_list input:checked").length == 0) {
@@ -488,7 +490,7 @@
 					$('#entities_append div').removeClass('hide');
 //					$('.NaN').addClass('hide');
 					$("#alphatbets_list input:checkbox:not(:checked)").each(function() {
-						$('.' + $(this).val()).addClass('hide');   
+						$('.' + $(this).val()).addClass('hide');
 						console.log($(this).val());
 					});
 
@@ -497,6 +499,11 @@
 					$('#entities_no_result').show();
 				else
 					$('#entities_no_result').hide();
+			}
+			function doSearch(e) {
+				if (e.keyCode == 13) {
+					window.location.href = '/index.php/Browse/facet?keyword=' + encodeURIComponent($('#quickSearch').val());
+				}
 			}
 			$('.dropdown-menu div').click(function(e) {
 				e.stopPropagation();

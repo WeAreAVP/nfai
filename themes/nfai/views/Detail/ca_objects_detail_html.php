@@ -45,6 +45,7 @@ $va_display_options = $this->getVar('primary_rep_display_options');
 			$va_count = count($va_hierarchy_path);
 			$i = 0;
 //				print "<div class='unit'><b>"._t("Hierarchical Path")."</b><br/> ";
+			print '<hr style="margin:0;" />';
 			print '<ul class="breadcrumb">';
 
 

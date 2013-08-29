@@ -203,6 +203,7 @@ if (!$this->request->isAjax()) {
 ?>
 <div class="clearfix"></div><div class="all-children">
 	<?php 
+	$o_db = new Db();
 	$t_object = new ca_objects();
 	$t_occ	= $this->getVar('t_item');
 //	$va_objects = $t_occ->get("ca_objects", array( "returnAsArray" => 1, 'checkAccess' => $va_access_values));
@@ -238,7 +239,7 @@ if (!$this->request->isAjax()) {
 	}
 	function getAllChildrens($t_object, $request_url,$padding)
 {
-	$va_children = $t_object->get("ca_objects.children.preferred_labels", array('returnAsArray' => 1, 'checkAccess' => $va_access_values));
+	$va_children = $t_object->get("ca_objects.children.preferred_labels", array('returnAsArray' => 1,'checkAccess' => $va_access_values));
 	if (sizeof($va_children) > 0)
 	{
 //				print "<div class='unit'><b>"._t("Part%1", ((sizeof($va_children) > 1) ? "s" : ""))."</b> ";

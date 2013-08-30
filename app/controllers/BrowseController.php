@@ -658,12 +658,12 @@ class BrowseController extends BaseBrowseController
 			if ($i < 6)
 			{
 
-				$collection .= "<div><div style='float:left;'><input type='checkbox' {$checked} id='object_{$record['object_id']}' name='collection[]' value='{$record['object_id']}|||{$val}'/></div><div style='margin-left: 20px;'>{$record['name']}</div></div>";
+				$collection .= "<div><div style='float:left;'><input type='checkbox' {$checked} id='object_{$record['object_id']}' name='collection[]' value='{$record['object_id']}|||" . html_entity_decode($val) . "'/></div><div style='margin-left: 20px;'>{$record['name']}</div></div>";
 			}
 			else
 			{
 				$moreCollection = TRUE;
-				$collectionModal .="<div><div style='float:left;'><input {$checked} id='object_{$record['object_id']}' onclick=\"$('#collectionSearchModal').modal('toggle');\" type='checkbox' name='collection[]' value='{$record['object_id']}|||{$val}'/></div><div style='margin-left: 20px;'>{$record['name']}</div></div>";
+				$collectionModal .="<div><div style='float:left;'><input {$checked} id='object_{$record['object_id']}' onclick=\"$('#collectionSearchModal').modal('toggle');\" type='checkbox' name='collection[]' value='{$record['object_id']}|||" . html_entity_decode($val) . "'/></div><div style='margin-left: 20px;'>{$record['name']}</div></div>";
 			}
 
 			$i ++;
@@ -721,12 +721,12 @@ class BrowseController extends BaseBrowseController
 			if ($i < 6)
 			{
 
-				$occurrence .= "<div><div style='float:left;'><input {$checked} id='occurrence_{$record['occurrence_id']}' type='checkbox' name='occurrence[]' value='{$record['occurrence_id']}|||{$val}'/></div><div style='margin-left: 20px;'>{$record['name']}</div></div>";
+				$occurrence .= "<div><div style='float:left;'><input {$checked} id='occurrence_{$record['occurrence_id']}' type='checkbox' name='occurrence[]' value='{$record['occurrence_id']}|||" . html_entity_decode($val) . "'/></div><div style='margin-left: 20px;'>{$record['name']}</div></div>";
 			}
 			else
 			{
 				$moreOccurrence = TRUE;
-				$occurrenceModal .="<div><div style='float:left;'><input {$checked} id='occurrence_{$record['occurrence_id']}' onclick=\"$('#occurenceSearchModal').modal('toggle');\" type='checkbox' name='occurrence[]' value='{$record['occurrence_id']}|||{$val}'/></div><div style='margin-left: 20px;'>{$record['name']}</div></div>";
+				$occurrenceModal .="<div><div style='float:left;'><input {$checked} id='occurrence_{$record['occurrence_id']}' onclick=\"$('#occurenceSearchModal').modal('toggle');\" type='checkbox' name='occurrence[]' value='{$record['occurrence_id']}|||" . html_entity_decode($val) . "'/></div><div style='margin-left: 20px;'>{$record['name']}</div></div>";
 			}
 
 			$i ++;
@@ -780,12 +780,12 @@ class BrowseController extends BaseBrowseController
 			if ($i < 6)
 			{
 
-				$entity .= "<div><div style='float:left;'><input {$checked} id='entity_{$record['entity_id']}' type='checkbox' name='entity[]' value='{$record['entity_id']}|||$val'/></div><div style='margin-left: 20px;'>{$record['displayname']}</span></div></div>";
+				$entity .= "<div><div style='float:left;'><input {$checked} id='entity_{$record['entity_id']}' type='checkbox' name='entity[]' value='{$record['entity_id']}|||" . html_entity_decode($val) . "'/></div><div style='margin-left: 20px;'>{$record['displayname']}</span></div></div>";
 			}
 			else
 			{
 				$moreEntity = TRUE;
-				$entityModal .="<div><div style='float:left;'><input {$checked} id='entity_{$record['entity_id']}' onclick=\"$('#entitySearchModal').modal('toggle');\" type='checkbox' name='entity[]' value='{$record['entity_id']}|||$val'/></div><div style='margin-left: 20px;'>{$record['displayname']}</span></div></div>";
+				$entityModal .="<div><div style='float:left;'><input {$checked} id='entity_{$record['entity_id']}' onclick=\"$('#entitySearchModal').modal('toggle');\" type='checkbox' name='entity[]' value='{$record['entity_id']}|||" . html_entity_decode($val) . "'/></div><div style='margin-left: 20px;'>{$record['displayname']}</span></div></div>";
 			}
 
 			$i ++;

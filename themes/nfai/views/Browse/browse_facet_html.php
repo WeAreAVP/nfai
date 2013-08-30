@@ -62,7 +62,7 @@ if ( ! $isAjax)
 						foreach ($_SESSION['entity'] as $value)
 						{
 							?>
-							<div class="btn-img" id="facet_entity_<?php echo $value['id'] ?>" ><span class="search_keys"><?php echo $value['name']; ?></span><i class="icon-remove-sign" style="float: right;cursor: pointer;" onclick="removeFilter('entity_<?php print $value['id']; ?>', 'entity');"></i></div>
+						<div class="btn-img" id="facet_entity_<?php echo $value['id'] ?>" ><span class="search_keys"><?php echo html_entity_decode($value['name']); ?></span><i class="icon-remove-sign" style="float: right;cursor: pointer;" onclick="removeFilter('entity_<?php print $value['id']; ?>', 'entity');"></i></div>
 						<?php } ?>
 					</div>
 				<?php } ?>
@@ -76,7 +76,7 @@ if ( ! $isAjax)
 						foreach ($_SESSION['occurence'] as $value)
 						{
 							?>
-							<div class="btn-img" id="facet_occurence_<?php echo $value['id'] ?>" ><span class="search_keys"><?php echo $value['name']; ?></span><i class="icon-remove-sign" style="float: right;cursor: pointer;" onclick="removeFilter('occurrence_<?php print $value['id']; ?>', 'occurrence');"></i></div>
+							<div class="btn-img" id="facet_occurence_<?php echo $value['id'] ?>" ><span class="search_keys"><?php echo html_entity_decode($value['name']); ?></span><i class="icon-remove-sign" style="float: right;cursor: pointer;" onclick="removeFilter('occurrence_<?php print $value['id']; ?>', 'occurrence');"></i></div>
 						<?php } ?>
 					</div>
 				<?php } ?>
@@ -90,7 +90,7 @@ if ( ! $isAjax)
 						foreach ($_SESSION['collection'] as $value)
 						{
 							?>
-							<div class="btn-img" id="facet_object_<?php echo $value['id'] ?>" ><span class="search_keys"><?php echo $value['name']; ?></span><i class="icon-remove-sign" style="float: right;cursor: pointer;" onclick="removeFilter('object_<?php print $value['id']; ?>', 'collection');"></i></div>
+							<div class="btn-img" id="facet_object_<?php echo $value['id'] ?>" ><span class="search_keys"><?php echo html_entity_decode($value['name']); ?></span><i class="icon-remove-sign" style="float: right;cursor: pointer;" onclick="removeFilter('object_<?php print $value['id']; ?>', 'collection');"></i></div>
 						<?php } ?>
 					</div>
 				<?php } ?>
@@ -348,6 +348,7 @@ if ( ! $isAjax)
 										var temp = {};
 										temp.value = $('#keyword_search').val();
 										Filters.push(temp);
+										
 										$('#facet_keyword_search').val(JSON.stringify(Filters));
 
 										search_facet();
@@ -387,10 +388,13 @@ if ( ! $isAjax)
 										dataType: 'html',
 										success: function(result, textStatus, request)
 										{
+											
 											$('#append_facet_result').html(result);
 											imagePreview();
 											bindEvents();
 											$.unblockUI();
+											$('body').animate({ scrollTop: 0 }, 'fast');	
+											
 
 										}
 

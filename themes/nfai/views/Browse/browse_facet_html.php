@@ -236,7 +236,7 @@ if ( ! $isAjax)
 								{
 									print "<tr>";
 									print "<td>";
-									if ($object_id['thumbnail'] != '')
+									if ($value['thumbnail'] != '')
 										print "<a href='javascript://;' rel=" . $value['medium'] . " class='preview' title='" . $value['name'] . "'><img src='" . $value['thumbnail'] . "'  style='height:35px;padding-right:20px;float:left;' width='50' /></a>";
 									else
 										print "<div style='height:35px;width:50px;padding-left:5px;padding-right:20px;float:left;' ></div>";

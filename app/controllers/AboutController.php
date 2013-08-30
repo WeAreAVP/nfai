@@ -42,7 +42,7 @@
  		public function __call($ps_name, $pa_arguments) {
 			
  			JavascriptLoadManager::register('browsable');
- 			
+ 			JavascriptLoadManager::register('cycle');
  			
  			$ps_name = preg_replace('![^A-Za-z0-9_\-]!', '', $ps_name);
 			$this->view->setVar('about', 1);

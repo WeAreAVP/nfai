@@ -5,10 +5,39 @@
 <script type="text/javascript">
 	var caUIBrowsePanel = caUI.initBrowsePanel({facetUrl: '<?php print caNavUrl($this->request, '', 'Browse', 'getFacet'); ?>'});
 </script>
-<div style="text-align: center;">
-	<img src="<?php print $this->request->getThemeUrlPath() ?>/graphics/vermont-folklife-center.jpg" style="max-height: 330px;" title="Vermont Folklife Center front entrance." />
+
+<div id="about_imanges" style="height: 410px;">
+	<div style='margin-top:10px;'>
+		<div id='featuredScroll' style="width: 930px;"> 
+			<a><img src="<?php print $this->request->getThemeUrlPath() ?>/graphics/vermont-folklife-center.jpg" alt="" style="max-height: 330px;">
+			</a>
+		</div>
+		<div id='featuredScrollCaption'>
+			<a>Vermont Folklife Center front entrance.</a>
+		</div>
+	</div>
+	<div style='margin-top:10px;'>
+		<div id='featuredScroll' style="width: 930px;"> 
+			<a><img src="<?php print $this->request->getThemeUrlPath() ?>/graphics/Western_Folklife_Center.jpg" alt="" style="max-height: 330px;">
+			</a>
+		</div>
+		<div id='featuredScrollCaption' >
+			<a>The Western Folklife Center, home of the annual National Cowboy Poetry Gathering, occupies an historic hotel building in Elko, Nevada. The renovated space features a modern exhibition gallery, performance theater, gift shop, archives and library, staff offices, and a functioning saloon. Photo by Steve Green.
+			</a>
+		</div>
+	</div>
+	<div style='margin-top:10px;'>
+		<div id='featuredScroll' style="width: 930px;"> <a><img src="<?php print $this->request->getThemeUrlPath() ?>/graphics/no-alone.jpg" alt="" style="max-height: 330px;"></a></div>
+		<div id='featuredScrollCaption'><a>I realize we are not alone in this necessity!</a></div>
+
+	</div>
+
 </div>
-<div style="color: #3D3D3D;font-weight: bold;margin-top: 5px;text-align: center;">Vermont Folklife Center front entrance.</div>
+
+
+
+
+
 <h1 style="line-height: 1.8em;word-spacing: 4px;color: #3D3D3D;">The National Folklore Archives Initiative (NFAI) is an American Folklore Society- managed effort to document and provide access to information about folklore archival collections.</h1>
 <div class="textContent aboutContent">
 <!--	<p>The National Folklore Archives Initiative (NFAI) is an American
@@ -85,3 +114,13 @@ arts and cultural agencies in the United States.</p>-->
 		American Folklore Society.</p>
 
 </div>
+<script>
+	$(document).ready(function() {
+		$('#about_imanges').cycle({
+			fx: 'fade', // choose your transition type, ex: fade, scrollUp, shuffle, etc...
+			speed: 4000,
+			timeout: 4000
+		});
+	});
+
+</script>

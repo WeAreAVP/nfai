@@ -693,80 +693,74 @@ print COinS::getTags($t_object);
 <?php
 # --- child hierarchy info
 print '<div class="clearfix"></div><div class="all-children">';
-
-$va_children = $t_object->get("ca_objects.children.preferred_labels", array('returnAsArray' => 1, 'checkAccess' => $va_access_values));
-if (sizeof($va_children) > 0)
+$o_db = new Db();
+$object_result = $o_db->query("SELECT o.object_id,ol.name,lt.item_value,orr.media
+						FROM  `ca_objects` o
+						INNER JOIN ca_object_labels ol ON ol.object_id=o.object_id AND ol.is_preferred=1
+						INNER JOIN ca_list_items lt ON lt.item_id=o.type_id 
+						LEFT JOIN  `ca_objects_x_object_representations` oor ON oor.object_id = o.object_id AND oor.is_primary=1
+						LEFT JOIN  `ca_object_representations` orr ON orr.representation_id = oor.representation_id AND orr.deleted=0
+						WHERE o.deleted=0 AND o.status=0 AND o.access !=0 AND o.parent_id={$t_object->get('object_id')}
+					    ORDER BY ol.name_sort");
+$i = 0;
+while ($object_result->nextRow())
 {
-	print "<div style='border-bottom: 2px solid #696969;'><h1 style='color:#3D3D3D;'>Objects in this ".  unicode_ucfirst($this->getVar('typename')) ."</h1></div>";
-	$i = 0;
-	
-	print "<table class='table hierarchy-table'>";
-	print "<thead><tr><th style='text-align: center;'>Title</th><th>Type</th></tr></thead>";
-	foreach ($va_children as $va_child)
+	if ($i == 0)
 	{
-		print "<tr>";
-		$child_idno = $va_child['object_id'];
-		$the_child = new ca_objects($child_idno);
-		$child_type = $the_child->get('ca_objects.type_id', array('convertCodesToDisplayText' => true));
-
-		# only show the first 5 and have a more link
-
-		$va_rep = $the_child->getPrimaryRepresentation(array('thumbnail', 'medium'), null, array('return_with_access' => $va_access_values));
-		print "<td>";
-		if ($va_rep['urls']['thumbnail'] != '')
-			print "<img src='" . $va_rep['urls']['thumbnail'] . "' style='height:35px;padding-right:20px;float:left;' width='50' />";
-		else
-			print "<div style='height:35px;width:50px;padding-left:5px;padding-right:20px;float:left;' ></div>";
-
-		# only show the first 5 and have a more link
-
-		
-		print  "<div style='padding-left:64px;'>".caNavLink($this->request, $va_child['name'] . " ", '', 'Detail', 'Object', 'Show', array('object_id' => $va_child['object_id'])) . "</div></td>";
-		print "<td>" . $child_type . "</td>";
-		print "</tr>";
-		getAllChildrens($the_child, $this->request,25);
-		$i ++;
-
-//					exit;
+		print "<div style='border-bottom: 2px solid #696969;'><h1 style='color:#3D3D3D;'>Objects in this " . unicode_ucfirst($this->getVar('typename')) . "</h1></div>";
+		print "<table class='table hierarchy-table'>";
+		print "<thead><tr><th style='text-align: center;'>Title</th><th>Type</th></tr></thead>";
 	}
+	$record = $object_result->getRow();
+	print "<tr>";
+	print "<td>";
+	if ($object_result->getMediaUrl('media', 'thumbnail') != '')
+		print "<img src='" . $object_result->getMediaUrl('media', 'thumbnail') . "'  style='height:35px;padding-right:20px;float:left;' width='50' />";
+	else
+		print "<div style='height:35px;width:50px;padding-left:5px;padding-right:20px;float:left;' ></div>";
+	print "<div style='padding-left:64px;'>" . caNavLink($this->request, $record['name'] . " ", '', 'Detail', 'Object', 'Show', array('object_id' => $record['object_id'])) . "</div></td>";
+	print "<td>" . ucfirst($record['item_value']) . "</td>";
+	print "</tr>";
+
+
+	getAllChildrens($record['object_id'], $this->request, 25);
+	$i ++;
+}
+if ($i > 0)
+{
 	print "</table><!-- end unit -->";
 }
-
-
 print "</div>";
 
-function getAllChildrens($t_object, $request_url,$padding)
+function getAllChildrens($t_object, $request_url, $padding)
 {
-	$va_children = $t_object->get("ca_objects.children.preferred_labels", array('returnAsArray' => 1, 'checkAccess' => $va_access_values));
-	if (sizeof($va_children) > 0)
+	$o_db = new Db();
+	$object_result = $o_db->query("SELECT o.object_id,ol.name,lt.item_value,orr.media
+						FROM  `ca_objects` o
+						INNER JOIN ca_object_labels ol ON ol.object_id=o.object_id AND ol.is_preferred=1
+						INNER JOIN ca_list_items lt ON lt.item_id=o.type_id 
+						LEFT JOIN  `ca_objects_x_object_representations` oor ON oor.object_id = o.object_id AND oor.is_primary=1
+						LEFT JOIN  `ca_object_representations` orr ON orr.representation_id = oor.representation_id AND orr.deleted=0
+						WHERE o.deleted=0 AND o.status=0 AND o.access !=0 AND o.parent_id={$t_object}
+					    ORDER BY ol.name_sort");
+
+	while ($object_result->nextRow())
 	{
-//				print "<div class='unit'><b>"._t("Part%1", ((sizeof($va_children) > 1) ? "s" : ""))."</b> ";
-		$i = 0;
 
-		foreach ($va_children as $va_child)
-		{
-			print "<tr>"; //
-			$child_idno = $va_child['object_id'];
-			$the_child = new ca_objects($child_idno);
-			$child_type = $the_child->get('ca_objects.type_id', array('convertCodesToDisplayText' => true));
+		$record = $object_result->getRow();
+		print "<tr>";
+		print "<td style='padding-left:" . $padding . "px;'>";
+		if ($object_result->getMediaUrl('media', 'thumbnail') != '')
+			print "<img src='" . $object_result->getMediaUrl('media', 'thumbnail') . "'  style='height:35px;padding-right:20px;float:left;' width='50' />";
+		else
+			print "<div style='height:35px;width:50px;padding-left:5px;padding-right:20px;float:left;' ></div>";
+		print "<div style='padding-left:64px;'>" . caNavLink($request_url, $record['name'] . " ", '', 'Detail', 'Object', 'Show', array('object_id' => $record['object_id'])) . "</div></td>";
+		print "<td>" . ucfirst($record['item_value']) . "</td>";
+		print "</tr>";
 
-			$va_rep = $the_child->getPrimaryRepresentation(array('thumbnail', 'medium'), null, array('return_with_access' => $va_access_values));
-			print "<td style='padding-left:".$padding."px;'>";
-			if ($va_rep['urls']['thumbnail'] != '')
-				print "<img src='" . $va_rep['urls']['thumbnail'] . "' style='height:35px;padding-right:20px;float:left;' width='50'/>";
-			else
-				print "<div style='height:35px;width:50px;padding-left:5px;padding-right:20px;float:left;' ></div>";
 
-			# only show the first 5 and have a more link
-
-			print  "<div style='padding-left:64px;'>".caNavLink($request_url, $va_child['name'] . " ", '', 'Detail', 'Object', 'Show', array('object_id' => $va_child['object_id'])) . "</div></td>";
-			print "<td>" . $child_type . "</td>";
-			print "</tr>";
-			getAllChildrens($the_child, $request_url,$padding+25);
-			$i ++;
-
-//					exit;
-		}
+		getAllChildrens($record['object_id'], $request_url, $padding + 25);
+		$i ++;
 	}
 }
 ?>

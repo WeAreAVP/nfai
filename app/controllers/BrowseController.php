@@ -433,19 +433,22 @@ class BrowseController extends BaseBrowseController
 		$_SESSION['occurence'] = array();
 		$_SESSION['type'] = array();
 		$_SESSION['parent_facet'] = '';
-		$_SESSION['total_count'] = 0;
+		$_SESSION['total_count'] = 1;
 		$_SESSION['keyword'] = '';
 		if (isset($_GET['c']) && ! empty($_GET['c']))
 		{
 			$_SESSION['collection'] = array(0 => array('id' => $_GET['c'], 'name' => $_GET['name']));
+			$_SESSION['parent_facet'] = 'collection';
 		}
 		if (isset($_GET['e']) && ! empty($_GET['e']))
 		{
 			$_SESSION['entity'] = array(0 => array('id' => $_GET['e'], 'name' => $_GET['name']));
+			$_SESSION['parent_facet'] = 'entity';
 		}
 		if (isset($_GET['o']) && ! empty($_GET['o']))
 		{
 			$_SESSION['occurence'] = array(0 => array('id' => $_GET['o'], 'name' => $_GET['name']));
+			$_SESSION['parent_facet'] = 'occurence';
 		}
 		if (isset($_GET['keyword']) && ! empty($_GET['keyword']))
 		{

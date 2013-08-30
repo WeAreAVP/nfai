@@ -600,7 +600,7 @@ class BrowseController extends BaseBrowseController
 			{
 				if ($key != 0)
 					$keyword .=' OR ';
-				$keyword .=" ol.name LIKE '{$value->value}%'";
+				$keyword .=" ol.name LIKE '%{$value->value}%'";
 			}
 			$keyword .=')';
 		}

@@ -28,7 +28,12 @@
 	</div>
 	<div style='margin-top:10px;'>
 		<div id='featuredScroll' style="width: 930px;"> <a><img src="<?php print $this->request->getThemeUrlPath() ?>/graphics/no-alone.jpg" alt="" style="max-height: 330px;"></a></div>
-		<div id='featuredScrollCaption'><a>I realize we are not alone in this necessity!</a></div>
+		<div id='featuredScrollCaption'><a>The Center for the Study of Upper Midwestern Cultures Archiving Program must remain fluent with numerous past and ever-changing recording equipment and media formats such as this ethnographic assemblage from a 2005 University of Wisconsin-Madison Field School.  Photo by Janet C. Gilmore, March 2013.</a></div>
+
+	</div>
+	<div style='margin-top:10px;'>
+		<div id='featuredScroll' style="width: 930px;"> <a><img src="<?php print $this->request->getThemeUrlPath() ?>/graphics/pfpLogoRED.jpeg" alt="" style="max-height: 330px;"></a></div>
+		<div id='featuredScrollCaption'><a>philadelphia folklore project.</a></div>
 
 	</div>
 

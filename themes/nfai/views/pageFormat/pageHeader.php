@@ -202,15 +202,15 @@
 							?>
 							<div>
 								<div class="pull-left"><div class="btn-group">
-										<button class="btn splash-css">Browse By</button>
+										<button class="btn splash-css">Browse</button>
 										<button class="btn dropdown-toggle" style="padding-bottom: 12px;" data-toggle="dropdown">
 											<span class="caret"></span>
 										</button>
 										<ul class="dropdown-menu">
-											<li><a href="/index.php/Browse/Search" role="button" >General Browse</a></li> 
-											<li><a href="#collectionModal" role="button"  data-toggle="modal" data-backdrop="static" onclick="getAllCollections();">Collection</a></li> 
-											<li><a href="#occuranceModal" role="button"  data-toggle="modal" data-backdrop="static" onclick="getAllRepository();">Repository</a></li> 
-											<li><a href="#entitiesModal" role="button"  data-toggle="modal" data-backdrop="static" onclick="getAllEntities();">Individual, Organization<br/> or Meeting</a></li> 
+											<li><a href="/index.php/Browse/Search" role="button" >General</a></li> 
+											<li><a href="#collectionModal" role="button"  data-toggle="modal" data-backdrop="static" onclick="getAllCollections();">Collections</a></li> 
+											<li><a href="#occuranceModal" role="button"  data-toggle="modal" data-backdrop="static" onclick="getAllRepository();">Repositories</a></li> 
+											<!--<li><a href="#entitiesModal" role="button"  data-toggle="modal" data-backdrop="static" onclick="getAllEntities();">Individual, Organization<br/> or Meeting</a></li>--> 
 
 
 											<!--<li><a href="javascript://" onclick='caUIBrowsePanel.showBrowsePanel("occurrence_facet_103");'>Repository</a></li>-->
@@ -416,7 +416,7 @@
 						{
 							$('#occurance_append').html('');
 							for (cnt in result) {
-								$('#occurance_append').append('<div style="padding:10px;font-size: 15px;" class="' + result[cnt].place + '"><a href="/index.php/Browse/facet?o=' + result[cnt].id + '&name=' + encodeURIComponent(result[cnt].name) + '">' + result[cnt].name + '</a></div>');
+								$('#occurance_append').append('<div style="padding:10px;font-size: 15px;" class="' + result[cnt].place + '"><a href="/index.php/Detail/Occurrence/Show/occurrence_id/' + result[cnt].id + '">' + result[cnt].name + '</a></div>');
 								$('#occurance_states_list').show();
 							}
 							isOpenRepositoryModal = 1;

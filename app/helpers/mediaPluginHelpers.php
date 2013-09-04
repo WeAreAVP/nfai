@@ -522,4 +522,16 @@
 		return $vs_tmp_filepath;
 	}
 	# ------------------------------------------------------------------------------------------------
+		/**
+			 * Detects if Gmagick PHP extension is available
+
+			 * 
+			 * @return boolean - true if available, false if not
+
+			 */
+			function caMediaPluginGmagickInstalled() {
+
+				return class_exists('Gmagick') ? true : false;
+
+			}
 ?>

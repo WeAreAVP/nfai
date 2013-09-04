@@ -13,7 +13,7 @@
 			</a>
 		</div>
 		<div id='featuredScrollCaption'>
-			<a>Vermont Folklife Center front entrance.</a>
+			<a>Vermont Folklife Center front entrance</a>
 		</div>
 	</div>
 	<div style='margin-top:10px;'>
@@ -33,7 +33,12 @@
 	</div>
 	<div style='margin-top:10px;'>
 		<div id='featuredScroll' style="width: 930px;"> <a><img src="<?php print $this->request->getThemeUrlPath() ?>/graphics/pfpLogoRED.jpeg" alt="" style="max-height: 330px;"></a></div>
-		<div id='featuredScrollCaption'><a>philadelphia folklore project.</a></div>
+		<div id='featuredScrollCaption'><a>PHILADELPHIA FOLKLORE PROJECT</a></div>
+
+	</div>
+	<div style='margin-top:10px;'>
+		<div id='featuredScroll' style="width: 930px;"> <a><img src="<?php print $this->request->getThemeUrlPath() ?>/graphics/Maine_Folklife_Center.jpg" alt="" style="max-height: 330px;"></a></div>
+		<div id='featuredScrollCaption'><a>Maine Folklife Center</a></div>
 
 	</div>
 

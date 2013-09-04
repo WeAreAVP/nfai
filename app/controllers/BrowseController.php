@@ -620,7 +620,7 @@ class BrowseController extends BaseBrowseController
 
 		while ($object_result->nextRow())
 		{
-
+			
 			$record = $object_result->getRow();
 			$object_array[] = array('id' => $record['object_id'],
 				'id' => $record['object_id'],

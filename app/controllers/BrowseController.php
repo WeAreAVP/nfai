@@ -481,7 +481,7 @@ class BrowseController extends BaseBrowseController
 			{
 				foreach ($_SESSION['keyword'] as $key => $value)
 				{
-					if (strstr( $record['name'],$value->value))
+					if (stristr( $record['name'],$value->value))
 						$show = 1;
 				}
 			}
@@ -642,7 +642,7 @@ class BrowseController extends BaseBrowseController
 			{
 				foreach ($_SESSION['keyword'] as $key => $value)
 				{
-					if (strstr($record['name'],$value->value))
+					if (stristr($record['name'],$value->value))
 						$show = 1;
 				}
 			}

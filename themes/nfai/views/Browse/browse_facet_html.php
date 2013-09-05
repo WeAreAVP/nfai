@@ -32,7 +32,7 @@ if ( ! $isAjax)
 						foreach ($_SESSION['keyword'] as $key => $value)
 						{
 							?>
-							<div class="btn-img" id="facet_type_<?php echo $value->value ?>" ><span class="search_keys"><?php echo ucfirst($value->value); ?></span><i class="icon-remove-sign" style="float: right;cursor: pointer;" onclick="removeKeywordFilter('<?php print $key; ?>');"></i></div>
+							<div class="btn-img" id="facet_type_<?php echo $value->value ?>" ><span class="search_keys"><?php echo $value->value; ?></span><i class="icon-remove-sign" style="float: right;cursor: pointer;" onclick="removeKeywordFilter('<?php print $key; ?>');"></i></div>
 						<?php } ?>
 					</div>
 				<?php } ?>

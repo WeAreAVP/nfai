@@ -23,19 +23,17 @@ if ( ! $isAjax)
 			<div class="searchbar-heading">FILTER OBJECTS</div> 
 			<div>
 				<?php
-				if (isset($_SESSION['keyword']) && !empty($_SESSION['keyword']) && count($_SESSION['keyword']) > 0)
+				if (isset($_SESSION['keyword']) && ! empty($_SESSION['keyword']) && count($_SESSION['keyword']) > 0)
 				{
 					?>	
 					<div id="entity_main">
 						<div class="filter-fileds"><b>KEYWORD</b></div>
 						<?php
-						
-						foreach ($_SESSION['keyword'] as $key=>$value)
+						foreach ($_SESSION['keyword'] as $key => $value)
 						{
-							
-						?>
+							?>
 							<div class="btn-img" id="facet_type_<?php echo $value->value ?>" ><span class="search_keys"><?php echo ucfirst($value->value); ?></span><i class="icon-remove-sign" style="float: right;cursor: pointer;" onclick="removeKeywordFilter('<?php print $key; ?>');"></i></div>
-						<?php }  ?>
+						<?php } ?>
 					</div>
 				<?php } ?>
 				<?php
@@ -62,7 +60,7 @@ if ( ! $isAjax)
 						foreach ($_SESSION['entity'] as $value)
 						{
 							?>
-						<div class="btn-img" id="facet_entity_<?php echo $value['id'] ?>" ><span class="search_keys"><?php echo html_entity_decode($value['name']); ?></span><i class="icon-remove-sign" style="float: right;cursor: pointer;" onclick="removeFilter('entity_<?php print $value['id']; ?>', 'entity');"></i></div>
+							<div class="btn-img" id="facet_entity_<?php echo $value['id'] ?>" ><span class="search_keys"><?php echo html_entity_decode($value['name']); ?></span><i class="icon-remove-sign" style="float: right;cursor: pointer;" onclick="removeFilter('entity_<?php print $value['id']; ?>', 'entity');"></i></div>
 						<?php } ?>
 					</div>
 				<?php } ?>
@@ -210,23 +208,27 @@ if ( ! $isAjax)
 				</thead>
 				<tbody>
 					<?php
+					
 					foreach ($collection_list as $object_id)
 					{
 						if (empty($_SESSION['type']) || in_array('collection', $_SESSION['type']))
 						{
-							print "<tr>";
-							print "<td>";
-							if ($object_id['thumbnail'] != '')
-								print "<a href='javascript://;' rel=" . $object_id['medium'] . " class='preview' title='" . $object_id['name'] . "'><img src='" . $object_id['thumbnail'] . "'  style='height:35px;padding-right:20px;float:left;' width='50' /></a>";
-							else
-								print "<div style='height:35px;width:50px;padding-left:5px;padding-right:20px;float:left;' ></div>";
+							if ($object_id['show'] == 1)
+							{
+								print "<tr>";
+								print "<td>";
+								if ($object_id['thumbnail'] != '')
+									print "<a href='javascript://;' rel=" . $object_id['medium'] . " class='preview' title='" . $object_id['name'] . "'><img src='" . $object_id['thumbnail'] . "'  style='height:35px;padding-right:20px;float:left;' width='50' /></a>";
+								else
+									print "<div style='height:35px;width:50px;padding-left:5px;padding-right:20px;float:left;' ></div>";
 
-							print "</td>";
-							print "<td>";
-							print caNavLink($this->request, $object_id['name'], '', 'Detail', 'Object', 'Show', array('object_id' => $object_id['id']));
-							print "</td>";
-							print "<td>{$object_id['type']}</td>";
-							print "</tr>";
+								print "</td>";
+								print "<td>";
+								print caNavLink($this->request, $object_id['name'], '', 'Detail', 'Object', 'Show', array('object_id' => $object_id['id']));
+								print "</td>";
+								print "<td>{$object_id['type']}</td>";
+								print "</tr>";
+							}
 						}
 						if (empty($_SESSION['type']) || in_array('item', $_SESSION['type']))
 						{
@@ -234,20 +236,23 @@ if ( ! $isAjax)
 							{
 								foreach ($object_id['items'] as $key => $value)
 								{
-									print "<tr>";
-									print "<td>";
-									if ($value['thumbnail'] != '')
-										print "<a href='javascript://;' rel=" . $value['medium'] . " class='preview' title='" . $value['name'] . "'><img src='" . $value['thumbnail'] . "'  style='height:35px;padding-right:20px;float:left;' width='50' /></a>";
-									else
-										print "<div style='height:35px;width:50px;padding-left:5px;padding-right:20px;float:left;' ></div>";
+									if ($value['show'] == 1)
+									{
+										print "<tr>";
+										print "<td>";
+										if ($value['thumbnail'] != '')
+											print "<a href='javascript://;' rel=" . $value['medium'] . " class='preview' title='" . $value['name'] . "'><img src='" . $value['thumbnail'] . "'  style='height:35px;padding-right:20px;float:left;' width='50' /></a>";
+										else
+											print "<div style='height:35px;width:50px;padding-left:5px;padding-right:20px;float:left;' ></div>";
 
-									print "</td>";
-									print "<td>";
-									print caNavLink($this->request, $value['name'], '', 'Detail', 'Object', 'Show', array('object_id' => $value['id']));
-									print "<div style='color:#999999;'><i>{$object_id['type']}: {$object_id['name']}</i></div>";
-									print "</td>";
-									print "<td>{$value['type']}</td>";
-									print "</tr>";
+										print "</td>";
+										print "<td>";
+										print caNavLink($this->request, $value['name'], '', 'Detail', 'Object', 'Show', array('object_id' => $value['id']));
+										print "<div style='color:#999999;'><i>{$object_id['type']}: {$object_id['name']}</i></div>";
+										print "</td>";
+										print "<td>{$value['type']}</td>";
+										print "</tr>";
+									}
 								}
 							}
 						}
@@ -333,7 +338,7 @@ if ( ! $isAjax)
 
 								function onPressEnter(e) {
 									if (e.keyCode == 13) {
-										if ($('#facet_keyword_search').val() != '' && $('#facet_keyword_search').val()!='""') {
+										if ($('#facet_keyword_search').val() != '' && $('#facet_keyword_search').val() != '""') {
 											Filters = JSON.parse($('#facet_keyword_search').val());
 										}
 										else {
@@ -348,13 +353,13 @@ if ( ! $isAjax)
 										var temp = {};
 										temp.value = $('#keyword_search').val();
 										Filters.push(temp);
-										
+
 										$('#facet_keyword_search').val(JSON.stringify(Filters));
 
 										search_facet();
 									}
 								}
-								function removeKeywordFilter(index){
+								function removeKeywordFilter(index) {
 									Filters = JSON.parse($('#facet_keyword_search').val());
 									delete (Filters[index]);
 									Filters.splice(index, 1);
@@ -388,13 +393,13 @@ if ( ! $isAjax)
 										dataType: 'html',
 										success: function(result, textStatus, request)
 										{
-											
+
 											$('#append_facet_result').html(result);
 											imagePreview();
 											bindEvents();
 											$.unblockUI();
-											$('body').animate({ scrollTop: 0 }, 'fast');	
-											
+											$('body').animate({scrollTop: 0}, 'fast');
+
 
 										}
 

@@ -474,13 +474,28 @@ class BrowseController extends BaseBrowseController
 		while ($object_result->nextRow())
 		{
 
+
+			$show = 0;
 			$record = $object_result->getRow();
+			if (isset($_SESSION['keyword']) && ! empty($_SESSION['keyword']) && count($_SESSION['keyword']) > 0)
+			{
+				foreach ($_SESSION['keyword'] as $key => $value)
+				{
+					if (strstr( $record['name'],$value->value))
+						$show = 1;
+				}
+			}
+			else
+			{
+				$show = 1;
+			}
 			$data[] = array('id' => $record['object_id'],
 				'id' => $record['object_id'],
 				'name' => $record['name'],
 				'type' => ucfirst($record['item_value']),
 				'thumbnail' => $object_result->getMediaUrl('media', 'thumbnail'),
 				'medium' => $object_result->getMediaUrl('media', 'medium'),
+				'show' => $show
 			);
 
 			$data = $this->getItems($record['object_id'], $data);
@@ -596,6 +611,7 @@ class BrowseController extends BaseBrowseController
 		if (isset($_SESSION['keyword']) && ! empty($_SESSION['keyword']) && count($_SESSION['keyword']) > 0)
 		{
 			$keyword = 'AND (';
+
 			foreach ($_SESSION['keyword'] as $key => $value)
 			{
 				if ($key != 0)
@@ -613,21 +629,34 @@ class BrowseController extends BaseBrowseController
 						LEFT JOIN  `ca_objects_x_object_representations` oor ON oor.object_id = o.object_id AND oor.is_primary=1
 						LEFT JOIN  `ca_object_representations` orr ON orr.representation_id = oor.representation_id AND orr.deleted=0
 						LEFT JOIN  `ca_object_representation_multifiles` orm ON orm.representation_id = oor.representation_id 
-						WHERE o.deleted=0 AND o.status=0 AND o.access !=0 AND o.type_id=21  {$where} {$entity_join} {$occurence_join} {$keyword}
+						WHERE o.deleted=0 AND o.status=0 AND o.access !=0 AND o.type_id=21  {$where} {$entity_join} {$occurence_join} 
 					    GROUP BY o.object_id
 						ORDER BY ol.name_sort,o.type_id");
 		$object_array = array();
 
 		while ($object_result->nextRow())
 		{
-			
+			$show = 0;
 			$record = $object_result->getRow();
+			if (isset($_SESSION['keyword']) && ! empty($_SESSION['keyword']) && count($_SESSION['keyword']) > 0)
+			{
+				foreach ($_SESSION['keyword'] as $key => $value)
+				{
+					if (strstr($record['name'],$value->value))
+						$show = 1;
+				}
+			}
+			else
+			{
+				$show = 1;
+			}
 			$object_array[] = array('id' => $record['object_id'],
 				'id' => $record['object_id'],
 				'name' => $record['name'],
 				'type' => ucfirst($record['item_value']),
 				'thumbnail' => $object_result->getMediaUrl('media', 'thumbnail'),
 				'medium' => $object_result->getMediaUrl('media', 'medium'),
+				'show' => $show,
 				'items' => $this->getItems($record['object_id'])
 			);
 		}

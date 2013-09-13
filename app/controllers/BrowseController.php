@@ -854,11 +854,12 @@ class BrowseController extends BaseBrowseController
 	public function getAllCollections()
 	{
 		$o_db = new Db();
+		$access=implode(',',caGetUserAccessValues($this->request));
 		$qr_res = $o_db->query("SELECT o.object_id
 					FROM ca_objects o
 					INNER JOIN ca_object_labels ol ON ol.object_id=o.object_id AND ol.is_preferred=1
 					WHERE o.type_id=21
-					AND o.deleted=0 AND o.status=0 AND o.access !=0
+					AND o.deleted=0  AND o.access IN ({$access})
 					ORDER BY ol.name_sort");
 		$object = array();
 		$states = caGetStateList();
@@ -889,10 +890,11 @@ class BrowseController extends BaseBrowseController
 	public function getAllRepository()
 	{
 		$o_db = new Db();
+		$access=implode(',',caGetUserAccessValues($this->request));
 		$qr_res = $o_db->query("SELECT o.occurrence_id
 								FROM ca_occurrences o
 								INNER JOIN ca_occurrence_labels ol ON ol.occurrence_id =o.occurrence_id AND ol.is_preferred =1
-								WHERE o.deleted=0 AND o.status=0 AND o.access !=0
+								WHERE o.deleted=0 AND o.access IN ({$access})
 								ORDER BY ol.name_sort");
 		$repository = array();
 		$states = caGetStateList();
@@ -922,13 +924,13 @@ class BrowseController extends BaseBrowseController
 	public function getAllEntities()
 	{
 		$o_db = new Db();
+		$access=implode(',',caGetUserAccessValues($this->request));
 		$qr_res = $o_db->query("
 				SELECT o.`entity_id` , ol.displayname
 				FROM ca_entities o
 				INNER JOIN ca_entity_labels ol ON ol.entity_id = o.entity_id AND ol.is_preferred =1
 				WHERE o.deleted =0
-				AND o.status =0
-				AND o.access !=0
+				AND o.access IN ({$access})
 				ORDER BY ol.displayname");
 		//address.stateprovince
 		$entities = array();

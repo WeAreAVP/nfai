@@ -254,21 +254,7 @@
 		</div>
 		<div id="pageArea">
 			<!-- end header -->
-			<?php
-// get last search ('basic_search' is the find type used by the SearchController)
-			$o_result_context = new ResultContext($this->request, 'ca_objects', 'basic_search');
-			$vs_search = $o_result_context->getSearchExpression();
-			?>
-			<!--			<div id="nav">
-							<div id="search"><form name="header_search" action="<?php print caNavUrl($this->request, '', 'Search', 'Index'); ?>" method="get">
-									<a href="#" style="position: absolute; z-index:1500; margin: 4px 0px 0px 132px;" name="searchButtonSubmit" onclick="document.forms.header_search.submit();
-							return false;"><?php print "<img src='" . $this->request->getThemeUrlPath() . "/graphics/searchglass.gif' border='0'>"; ?></a>
-									<input type="text" name="search" value=" " onclick='jQuery("#quickSearch").select();' id="quickSearch"  autocomplete="off" size="100"/>
-								</form></div>
-			<?php
-			print join(" ", $this->getVar('nav')->getHTMLMenuBarAsLinkArray());
-			?>
-						</div> end nav -->
+			
 
 
 			<div id="collectionModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

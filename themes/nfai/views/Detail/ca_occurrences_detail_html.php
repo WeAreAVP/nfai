@@ -241,7 +241,8 @@ if ( ! $this->request->isAjax())
 					print "<div class='unit'><h2>" . _t("Subject") . ((sizeof($va_terms) > 1) ? "s" : "") . "</h2>";
 					foreach ($va_terms as $va_term_info)
 					{
-						print "<div>" . caNavLink($this->request, $va_term_info['label'], '', '', 'Search', 'Index', array('search' => $va_term_info['label'])) . "</div>";
+//						print "<div>" . caNavLink($this->request, $va_term_info['label'], '', '', 'Search', 'Index', array('search' => $va_term_info['label'])) . "</div>";
+						print "<div>" . $va_term_info['label'] . "</div>";
 					}
 					print "</div><!-- end unit -->";
 				}
@@ -272,7 +273,7 @@ if ( ! $this->request->isAjax())
 	<div class="clearfix"></div><div class="all-children">
 		<?php
 		$o_db = new Db();
-
+		$access=implode(',',$va_access_values);
 		$object_result = $o_db->query("SELECT o.object_id,ol.name,lt.item_value,orr.media
 						FROM  `ca_objects` o
 						INNER JOIN ca_object_labels ol ON ol.object_id=o.object_id AND ol.is_preferred=1
@@ -280,7 +281,7 @@ if ( ! $this->request->isAjax())
 						LEFT JOIN  `ca_objects_x_object_representations` oor ON oor.object_id = o.object_id AND oor.is_primary=1
 						LEFT JOIN  `ca_object_representations` orr ON orr.representation_id = oor.representation_id AND orr.deleted=0
 						INNER JOIN  `ca_objects_x_occurrences` oe ON oe.object_id = o.object_id 
-						WHERE o.deleted=0 AND o.status=0 AND o.access !=0 AND o.type_id=21 AND oe.occurrence_id={$vn_occurrence_id}
+						WHERE o.deleted=0 AND o.access IN ({$access}) AND o.type_id=21 AND oe.occurrence_id={$vn_occurrence_id}
 					    ORDER BY ol.name_sort");
 		$i = 0;
 
@@ -296,7 +297,7 @@ if ( ! $this->request->isAjax())
 			print "<tr>";
 			print "<td>";
 			if ($object_result->getMediaUrl('media', 'thumbnail') != '')
-				print "<img src='" . $object_result->getMediaUrl('media', 'thumbnail') . "'  style='height:35px;padding-right:20px;float:left;' width='50' />";
+				print "<a class='preview'  href='javascript://;' rel=" . $object_result->getMediaUrl('media','medium') . " title='{$record['name']}'><img src='" . $object_result->getMediaUrl('media', 'thumbnail') . "'  style='height:35px;padding-right:20px;float:left;' width='50' /></a>";
 			else
 				print "<div style='height:35px;width:50px;padding-left:5px;padding-right:20px;float:left;' ></div>";
 			print "<div style='padding-left:64px;'>" . caNavLink($this->request, $record['name'] . " ", '', 'Detail', 'Object', 'Show', array('object_id' => $record['object_id'])) . "</div></td>";
@@ -304,7 +305,7 @@ if ( ! $this->request->isAjax())
 			print "</tr>";
 
 
-			getAllChildrens($record['object_id'], $this->request, 25);
+			getAllChildrens($record['object_id'], $this->request, 25,$access);
 			$i ++;
 		}
 		if ($i > 0)
@@ -312,7 +313,7 @@ if ( ! $this->request->isAjax())
 			print "</table><!-- end unit -->";
 		}
 
-		function getAllChildrens($t_object, $request_url, $padding)
+		function getAllChildrens($t_object, $request_url, $padding,$access)
 		{
 			$o_db = new Db();
 			$object_result = $o_db->query("SELECT o.object_id,ol.name,lt.item_value,orr.media
@@ -321,7 +322,7 @@ if ( ! $this->request->isAjax())
 						INNER JOIN ca_list_items lt ON lt.item_id=o.type_id 
 						LEFT JOIN  `ca_objects_x_object_representations` oor ON oor.object_id = o.object_id AND oor.is_primary=1
 						LEFT JOIN  `ca_object_representations` orr ON orr.representation_id = oor.representation_id AND orr.deleted=0
-						WHERE o.deleted=0 AND o.status=0 AND o.access !=0 AND o.parent_id={$t_object}
+						WHERE o.deleted=0 AND o.access IN ({$access}) AND o.parent_id={$t_object}
 					    ORDER BY ol.name_sort");
 
 			while ($object_result->nextRow())
@@ -331,7 +332,7 @@ if ( ! $this->request->isAjax())
 				print "<tr>";
 				print "<td style='padding-left:" . $padding . "px;'>";
 				if ($object_result->getMediaUrl('media', 'thumbnail') != '')
-					print "<img src='" . $object_result->getMediaUrl('media', 'thumbnail') . "'  style='height:35px;padding-right:20px;float:left;' width='50' />";
+					print "<a class='preview'  href='javascript://;' rel=" . $object_result->getMediaUrl('media','medium') . " title='{$record['name']}'><img src='" . $object_result->getMediaUrl('media', 'thumbnail') . "'  style='height:35px;padding-right:20px;float:left;' width='50' /></a>";
 				else
 					print "<div style='height:35px;width:50px;padding-left:5px;padding-right:20px;float:left;' ></div>";
 				print "<div style='padding-left:64px;'>" . caNavLink($request_url, $record['name'] . " ", '', 'Detail', 'Object', 'Show', array('object_id' => $record['object_id'])) . "</div></td>";
@@ -339,9 +340,69 @@ if ( ! $this->request->isAjax())
 				print "</tr>";
 
 
-				getAllChildrens($record['object_id'], $request_url, $padding + 25);
+				getAllChildrens($record['object_id'], $request_url, $padding + 25,$access);
 				$i ++;
 			}
 		}
 		?>
 	</div>
+
+<script type="text/javascript">
+	imagePreview = function() {
+		/* CONFIG */
+
+		xOffset = 10;
+		yOffset = 30;
+
+		// these 2 variable determine popup's distance from the cursor
+		// you might want to adjust to get the right result
+
+		/* END CONFIG */
+		$("a.preview").hover(function(e) {
+			this.t = this.title;
+			this.title = "";
+			var c = (this.t != "") ? "<br/>" + this.t : "";
+			$("body").append("<p id='preview'><img src='" + this.rel + "' alt='Image preview' />" + c + "</p>");
+			$("#preview")
+			.css("top", (e.pageY - xOffset-200) + "px")
+			.css("left", (e.pageX + yOffset) + "px")
+			.fadeIn("fast");
+		},
+		function() {
+			this.title = this.t;
+			$("#preview").remove();
+		});
+		$("a.preview").mousemove(function(e) {
+			$("#preview")
+			.css("top", (e.pageY - xOffset-200) + "px")
+			.css("left", (e.pageX + yOffset) + "px");
+		});
+	};
+
+
+	// starting the script on page load
+	$(document).ready(function() {
+		imagePreview();
+
+	});
+</script>
+<style type="text/css">
+		#preview{
+			position:absolute;
+			border:1px solid #ccc;
+			background:#333;
+			padding:5px;
+			display:none;
+			color:#fff;
+		}
+		pre{
+			display:block;
+			font:100% "Courier New", Courier, monospace;
+			padding:10px;
+			border:1px solid #bae2f0;
+			background:#e3f4f9;	
+			margin:.5em 0;
+			overflow:auto;
+			width:800px;
+		}
+	</style>

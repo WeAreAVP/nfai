@@ -234,7 +234,9 @@ $va_display_options = $this->getVar('primary_rep_display_options');
 			{
 				foreach ($va_metadata as $v_i => $va_thing)
 				{
-					print caNavLink($this->request, $va_thing, '', '', 'Search', 'Index', array('search' => urlencode($va_thing))) . "<br/>";
+					
+//					print caNavLink($this->request, $va_thing, '', '', 'Search', 'Index', array('search' => urlencode($va_thing))) . "<br/>";
+					print caNavLink($this->request, $va_thing, '', '', 'Browse', 'facet?keyword='.urlencode($va_thing), array()) . "<br/>";
 				}
 			}
 			print "</div>";
@@ -295,7 +297,8 @@ $va_display_options = $this->getVar('primary_rep_display_options');
 			{
 				foreach ($va_metadata as $v_i => $va_thing)
 				{
-					print caNavLink($this->request, $va_thing, '', '', 'Search', 'Index', array('search' => urlencode($va_thing))) . "<br/>";
+//					print caNavLink($this->request, $va_thing, '', '', 'Search', 'Index', array('search' => urlencode($va_thing))) . "<br/>";
+					print caNavLink($this->request, $va_thing, '', '', 'Browse', 'facet?keyword='.urlencode($va_thing), array()) . "<br/>";
 				}
 			}
 			print "</div>";
@@ -585,7 +588,8 @@ $va_display_options = $this->getVar('primary_rep_display_options');
 				$va_tag_links = array();
 				foreach ($va_tags as $vs_tag)
 				{
-					$va_tag_links[] = caNavLink($this->request, $vs_tag, '', '', 'Search', 'Index', array('search' => $vs_tag));
+//					$va_tag_links[] = caNavLink($this->request, $vs_tag, '', '', 'Search', 'Index', array('search' => $vs_tag));
+					$va_tag_links[] =  $vs_tag;
 				}
 				?>
 				<h2><?php print _t("Tags"); ?></h2>

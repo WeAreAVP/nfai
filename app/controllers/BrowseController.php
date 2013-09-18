@@ -462,18 +462,26 @@ class BrowseController extends BaseBrowseController
 	public function getItems($object_id, $data = array())
 	{
 		$o_db = new Db();
-		$object_result = $o_db->query("SELECT o.object_id,ol.name,lt.item_value,orr.media
-						FROM  `ca_objects` o
-						INNER JOIN ca_object_labels ol ON ol.object_id=o.object_id AND ol.is_preferred=1
-						INNER JOIN ca_list_items lt ON lt.item_id=o.type_id 
-						LEFT JOIN  `ca_objects_x_object_representations` oor ON oor.object_id = o.object_id AND oor.is_primary=1
-						LEFT JOIN  `ca_object_representations` orr ON orr.representation_id = oor.representation_id AND orr.deleted=0
-						WHERE o.deleted=0 AND o.status=0 AND o.access !=0 AND o.parent_id={$object_id}
-					    ORDER BY ol.name_sort");
+		$access = implode(',', caGetUserAccessValues($this->request));
+		$o_db->query("SET SESSION GROUP_CONCAT_MAX_LEN = 1000000;");
+		$object_result = $o_db->query("SELECT o.object_id,ol.name,lt.item_value,orr.media,
+			  GROUP_CONCAT(DISTINCT(IFNULL(`clil`.`name_singular`,'(**)')) SEPARATOR ' | ') AS name_singular,
+			  GROUP_CONCAT(DISTINCT(IFNULL(`clil`.`name_plural`,'(**)')) SEPARATOR ' | ') AS name_plural,
+			  GROUP_CONCAT(DISTINCT(`cav`.`value_longtext1`) SEPARATOR '') AS description
+			FROM  `ca_objects` o
+			  INNER JOIN ca_object_labels ol ON ol.object_id=o.object_id AND ol.is_preferred=1
+			  INNER JOIN ca_list_items lt ON lt.item_id=o.type_id 
+              LEFT JOIN  `ca_objects_x_object_representations` oor ON oor.object_id = o.object_id AND oor.is_primary=1
+              LEFT JOIN  `ca_object_representations` orr ON orr.representation_id = oor.representation_id AND orr.deleted=0
+			  LEFT JOIN  `ca_attributes` ca ON ca.row_id = o.object_id AND ca.table_num = 57
+			  LEFT JOIN  `ca_attribute_values` cav ON cav.attribute_id = ca.attribute_id
+			  LEFT JOIN  `ca_list_item_labels` clil ON clil.item_id = cav.item_id
+			WHERE o.deleted=0 AND o.access IN ({$access}) AND o.parent_id={$object_id}
+			GROUP BY o.object_id	
+			ORDER BY ol.name_sort");
 
 		while ($object_result->nextRow())
 		{
-
 
 			$show = 0;
 			$record = $object_result->getRow();
@@ -481,8 +489,12 @@ class BrowseController extends BaseBrowseController
 			{
 				foreach ($_SESSION['keyword'] as $key => $value)
 				{
-					if (stristr( $record['name'],$value->value))
+//					echo $record['description'].'<br/><br/>'; 
+					if (stristr($record['name'], $value->value) || stristr($record['name_singular'], $value->value) || stristr($record['name_plural'], $value->value)|| stristr($record['description'], $value->value)){
+						
 						$show = 1;
+					}
+						
 				}
 			}
 			else
@@ -588,6 +600,7 @@ class BrowseController extends BaseBrowseController
 				$_SESSION['occurence'] = array();
 		}
 		$o_db = new Db();
+		$access = implode(',', caGetUserAccessValues($this->request));
 		$keyword = $where = $occurence_join = $entity_join = '';
 		$selectedCollection = $selectedEntity = $selectedOccurrence = array();
 		if (isset($_SESSION['collection']) && count($_SESSION['collection']) > 0)
@@ -616,12 +629,17 @@ class BrowseController extends BaseBrowseController
 			{
 				if ($key != 0)
 					$keyword .=' OR ';
-				$keyword .=" ol.name LIKE '%{$value->value}%'";
+				$keyword .=" ol.name LIKE '%{$value->value}%' OR clil.name_singular LIKE '%{$value->value}%' OR clil.name_plural LIKE '%{$value->value}%' OR cav.value_longtext1 LIKE '%{$value->value}%'";
 			}
 			$keyword .=')';
 		}
-		$object_result = $o_db->query("SELECT o.object_id,ol.name,lt.item_value,orr.media
-						FROM  `ca_objects` o
+		
+		$o_db->query("SET SESSION GROUP_CONCAT_MAX_LEN = 1000000;");
+		$object_result = $o_db->query("SELECT o.object_id,ol.name,lt.item_value,orr.media,
+				GROUP_CONCAT(DISTINCT(IFNULL(`clil`.`name_singular`,'(**)')) SEPARATOR ' | ') AS name_singular,
+				GROUP_CONCAT(DISTINCT(IFNULL(`clil`.`name_plural`,'(**)')) SEPARATOR ' | ') AS name_plural,
+				GROUP_CONCAT(DISTINCT(`cav`.`value_longtext1`) SEPARATOR '') AS description
+				FROM  `ca_objects` o
 						INNER JOIN ca_object_labels ol ON ol.object_id=o.object_id AND ol.is_preferred=1
 						INNER JOIN ca_list_items lt ON lt.item_id=o.type_id 
 						LEFT JOIN  `ca_objects_x_entities` oe ON oe.object_id = o.object_id 
@@ -629,7 +647,10 @@ class BrowseController extends BaseBrowseController
 						LEFT JOIN  `ca_objects_x_object_representations` oor ON oor.object_id = o.object_id AND oor.is_primary=1
 						LEFT JOIN  `ca_object_representations` orr ON orr.representation_id = oor.representation_id AND orr.deleted=0
 						LEFT JOIN  `ca_object_representation_multifiles` orm ON orm.representation_id = oor.representation_id 
-						WHERE o.deleted=0 AND o.status=0 AND o.access !=0 AND o.type_id=21  {$where} {$entity_join} {$occurence_join} 
+						LEFT JOIN  `ca_attributes` ca ON ca.row_id = o.object_id AND ca.table_num = 57
+						LEFT JOIN  `ca_attribute_values` cav ON cav.attribute_id = ca.attribute_id
+						LEFT JOIN  `ca_list_item_labels` clil ON clil.item_id = cav.item_id
+						WHERE o.deleted=0 AND o.access IN ({$access}) AND o.type_id=21 {$where} {$entity_join} {$occurence_join} 
 					    GROUP BY o.object_id
 						ORDER BY ol.name_sort,o.type_id");
 		$object_array = array();
@@ -638,11 +659,12 @@ class BrowseController extends BaseBrowseController
 		{
 			$show = 0;
 			$record = $object_result->getRow();
+			
 			if (isset($_SESSION['keyword']) && ! empty($_SESSION['keyword']) && count($_SESSION['keyword']) > 0)
 			{
 				foreach ($_SESSION['keyword'] as $key => $value)
 				{
-					if (stristr($record['name'],$value->value))
+					if (stristr($record['name'], $value->value) || stristr($record['name_singular'], $value->value) || stristr($record['name_plural'], $value->value) || stristr($record['description'], $value->value))
 						$show = 1;
 				}
 			}
@@ -660,7 +682,7 @@ class BrowseController extends BaseBrowseController
 				'items' => $this->getItems($record['object_id'])
 			);
 		}
-
+		
 		$this->view->setVar('collection_list', $object_array);
 		$collection_where = '';
 		if ($_SESSION['parent_facet'] != 'collection')
@@ -670,8 +692,11 @@ class BrowseController extends BaseBrowseController
 					INNER JOIN ca_object_labels ol ON ol.object_id=o.object_id AND ol.is_preferred=1
 					LEFT JOIN  `ca_objects_x_entities` oe ON oe.object_id = o.object_id 
 					LEFT JOIN  `ca_objects_x_occurrences` oo ON oo.object_id = o.object_id 
+					LEFT JOIN  `ca_attributes` ca ON ca.row_id = o.object_id AND ca.table_num = 57
+						LEFT JOIN  `ca_attribute_values` cav ON cav.attribute_id = ca.attribute_id
+						LEFT JOIN  `ca_list_item_labels` clil ON clil.item_id = cav.item_id
 					WHERE o.type_id=21
-					AND o.deleted=0 AND o.status=0 AND o.access !=0 $collection_where
+					AND o.deleted=0 AND o.access IN ({$access}) {$collection_where}
 					GROUP BY o.object_id
 					ORDER BY ol.name_sort");
 		$i = 0;
@@ -726,16 +751,13 @@ class BrowseController extends BaseBrowseController
 								LEFT JOIN `ca_objects` o ON o.object_id = oxo.object_id 
 								LEFT JOIN `ca_objects_x_entities` oe ON oe.object_id = o.object_id 
 								INNER JOIN ca_object_labels ol ON ol.object_id=o.object_id AND ol.is_preferred=1
-								WHERE oo.deleted=0  AND oo.access !=0 {$occurrence_where} 
+								LEFT JOIN  `ca_attributes` ca ON ca.row_id = o.object_id AND ca.table_num = 57
+						LEFT JOIN  `ca_attribute_values` cav ON cav.attribute_id = ca.attribute_id
+						LEFT JOIN  `ca_list_item_labels` clil ON clil.item_id = cav.item_id
+								WHERE oo.deleted=0  AND oo.access IN ({$access}) {$occurrence_where} 
 								GROUP BY oo.occurrence_id
 								ORDER BY olo.name_sort");
-//		$occurrences_result = $o_db->query("SELECT oo.occurrence_id,ol.name
-//								FROM ca_occurrences oo
-//								INNER JOIN ca_occurrence_labels ol ON ol.occurrence_id =oo.occurrence_id AND ol.is_preferred =1
-//								INNER JOIN  `ca_objects` o ON o.object_id = oo.object_id {$where}
-//								INNER JOIN  `ca_objects_x_entities` oe ON oe.object_id = o.object_id {$entity_join}
-//								WHERE oo.deleted=0 AND oo.status=0 AND oo.access !=0
-//								ORDER BY ol.name_sort");
+
 		$i = 0;
 		$occurrence = '';
 		$occurrenceModal = '';
@@ -789,9 +811,11 @@ class BrowseController extends BaseBrowseController
 				LEFT JOIN  `ca_objects` o ON o.object_id = oxo.object_id
 				LEFT JOIN  `ca_objects_x_occurrences` oo ON oo.object_id = o.object_id
 				INNER JOIN ca_object_labels ol ON ol.object_id=o.object_id AND ol.is_preferred=1
+				LEFT JOIN  `ca_attributes` ca ON ca.row_id = o.object_id AND ca.table_num = 57
+                LEFT JOIN  `ca_attribute_values` cav ON cav.attribute_id = ca.attribute_id
+						LEFT JOIN  `ca_list_item_labels` clil ON clil.item_id = cav.item_id
 				WHERE oe.deleted =0
-				AND oe.status =0
-				AND oe.access !=0 {$entity_where}
+				AND oe.access IN ({$access}) {$entity_where}
 				GROUP BY oe.`entity_id` 
 				ORDER BY ole.name_sort
 				");
@@ -854,7 +878,7 @@ class BrowseController extends BaseBrowseController
 	public function getAllCollections()
 	{
 		$o_db = new Db();
-		$access=implode(',',caGetUserAccessValues($this->request));
+		$access = implode(',', caGetUserAccessValues($this->request));
 		$qr_res = $o_db->query("SELECT o.object_id
 					FROM ca_objects o
 					INNER JOIN ca_object_labels ol ON ol.object_id=o.object_id AND ol.is_preferred=1
@@ -890,7 +914,7 @@ class BrowseController extends BaseBrowseController
 	public function getAllRepository()
 	{
 		$o_db = new Db();
-		$access=implode(',',caGetUserAccessValues($this->request));
+		$access = implode(',', caGetUserAccessValues($this->request));
 		$qr_res = $o_db->query("SELECT o.occurrence_id
 								FROM ca_occurrences o
 								INNER JOIN ca_occurrence_labels ol ON ol.occurrence_id =o.occurrence_id AND ol.is_preferred =1
@@ -924,7 +948,7 @@ class BrowseController extends BaseBrowseController
 	public function getAllEntities()
 	{
 		$o_db = new Db();
-		$access=implode(',',caGetUserAccessValues($this->request));
+		$access = implode(',', caGetUserAccessValues($this->request));
 		$qr_res = $o_db->query("
 				SELECT o.`entity_id` , ol.displayname
 				FROM ca_entities o

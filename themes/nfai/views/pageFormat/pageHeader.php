@@ -188,6 +188,7 @@
 		<div style="width: 940px;margin: 0 auto;background-color: white;">
 			<?php
 			print caNavLink($this->request, "<img src='" . $this->request->getThemeUrlPath() . "/graphics/" . $this->request->config->get('header_img') . "' border='0'>", "", "", "", "");
+			print caNavLink($this->request, "<img src='" . $this->request->getThemeUrlPath() . "/graphics/NFAI-logo2.jpg' border='0' style='height:130px;float:right;'>", "", "", "", "");;
 			?>
 		</div>
 		<div class="navbar" style="width: 940px;margin: 0 auto;">

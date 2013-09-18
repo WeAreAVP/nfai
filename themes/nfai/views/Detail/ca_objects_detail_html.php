@@ -1,3 +1,4 @@
+
 <?php
 /* ----------------------------------------------------------------------
  * pawtucket2/themes/default/views/Detail/ca_objects_detail_html.php : 
@@ -829,3 +830,4 @@ function getAllChildrens($t_object, $request_url, $padding,$access)
 			width:800px;
 		}
 	</style>
+	

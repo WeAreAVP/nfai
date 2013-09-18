@@ -1,3 +1,4 @@
+
 <div id="splashBrowsePanel" class="modal hide" style="z-index:1000;">
 	<div id="splashBrowsePanelContent">
 	</div>

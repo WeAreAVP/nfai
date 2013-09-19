@@ -31,7 +31,8 @@
         container.attr('className',  'searchlight-balloon');
         container.css({
             position: 'absolute',
-            top: input.offset().top + input.outerHeight()+140, 
+//            top: input.offset().top + input.outerHeight() + 140, 
+            top: 188, 
             display: 'none',
 			border:'1px solid darkgray',
 			'-webkit-border-radius': '5px',

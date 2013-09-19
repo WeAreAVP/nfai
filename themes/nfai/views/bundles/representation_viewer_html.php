@@ -305,11 +305,14 @@
 	<div id="<?php print ($vs_display_type == 'media_overlay') ? 'caMediaOverlayContent' : 'caMediaDisplayContent'; ?>">
 <?php
 	// return standard tag
+	
 	if (!is_array($va_display_options)) { $va_display_options = array(); }
 	print $t_rep->getMediaTag('media', $vs_show_version, array_merge($va_display_options, array(
 		'id' => ($vs_display_type == 'media_overlay') ? 'caMediaOverlayContentMedia' : 'caMediaDisplayContentMedia', 
 		'viewer_base_url' => $this->request->getBaseUrlPath()
 	)));
+	if($t_rep->get('ca_object_representations.preferred_labels.name')!='[BLANK]')
+		print "<div>".$t_rep->get('ca_object_representations.preferred_labels.name')."</div>";
 ?>
 	</div><!-- end caMediaOverlayContent -->
 <?php

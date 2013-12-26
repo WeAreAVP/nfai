@@ -801,9 +801,7 @@ function getAllChildrens($t_object, $request_url, $padding,$access)
 			.css("top", (e.pageY - xOffset-200) + "px")
 			.css("left", (e.pageX + yOffset) + "px");
 		});
-		$("a.preview").mouseout(function(e) {
-			$("#preview").remove();
-		});
+		
 	};
 
 

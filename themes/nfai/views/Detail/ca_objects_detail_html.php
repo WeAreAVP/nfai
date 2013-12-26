@@ -794,12 +794,15 @@ function getAllChildrens($t_object, $request_url, $padding,$access)
 		},
 		function() {
 			this.title = this.t;
-			$("#preview").remove();
+
 		});
 		$("a.preview").mousemove(function(e) {
 			$("#preview")
 			.css("top", (e.pageY - xOffset-200) + "px")
 			.css("left", (e.pageX + yOffset) + "px");
+		});
+		$("a.preview").mouseout(function(e) {
+			$("#preview").remove();
 		});
 	};
 

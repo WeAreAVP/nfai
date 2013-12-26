@@ -1,4 +1,9 @@
 .DS_Store
 admin/media
 admin/media/*
-
+admin/app/tmp
+admin/app/tmp/*
+app/tmp
+app/tmp/*
+media
+media/*

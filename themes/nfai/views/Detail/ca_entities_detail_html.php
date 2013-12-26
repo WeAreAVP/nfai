@@ -337,7 +337,7 @@ if ( ! $this->request->isAjax())
 		},
 		function() {
 			this.title = this.t;
-//			$("#preview").remove();
+			$("#preview").remove();
 		});
 		$("a.preview").mousemove(function(e) {
 			$("#preview")

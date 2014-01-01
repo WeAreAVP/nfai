@@ -202,6 +202,49 @@
 		if ($o_config->get('dont_use_imagick')) { return false; }
 		return class_exists('Imagick') ? true : false;
 	}
+/**
+         * Detects if Gmagick PHP extension is available
+         * 
+         * @return boolean - true if available, false if not
+         */
+        function caMediaPluginGmagickInstalled() {
+                return class_exists('Gmagick') ? true : false;
+        }
+/**
+         * Detects if GraphicsMagick is available in specified directory path
+         * 
+         * @param $ps_graphicsmagick_path - path to directory containing GraphicsMagick executables
+         * @return boolean - true if available, false if not
+         */
+        function caMediaPluginGraphicsMagickInstalled($ps_graphicsmagick_path=null) {
+                if(!$ps_graphicsmagick_path) { $ps_graphicsmagick_path = caGetExternalApplicationPath('graphicsmagick'); }
+                
+                global $_MEDIAHELPER_PLUGIN_CACHE_GRAPHICSMAGICK;
+                if (isset($_MEDIAHELPER_PLUGIN_CACHE_GRAPHICSMAGICK[$ps_graphicsmagick_path])) {
+                        return $_MEDIAHELPER_PLUGIN_CACHE_GRAPHICSMAGICK[$ps_graphicsmagick_path];
+                } else {
+                        $_MEDIAHELPER_PLUGIN_CACHE_GRAPHICSMAGICK = array();
+                }
+                if (!$ps_graphicsmagick_path || (preg_match("/[^\/A-Za-z0-9\.:]+/", $ps_graphicsmagick_path)) || !file_exists($ps_graphicsmagick_path)) { return false; }
+                
+                exec($ps_graphicsmagick_path.' 2> /dev/null', $va_output, $vn_return);
+                if (($vn_return >= 0) && ($vn_return < 127)) {
+                        return $_MEDIAHELPER_PLUGIN_CACHE_GRAPHICSMAGICK[$ps_graphicsmagick_path] = true;
+                }
+                return $_MEDIAHELPER_PLUGIN_CACHE_GRAPHICSMAGICK[$ps_graphicsmagick_path] = false;
+        }
+ /**
+         * Get path in external_applications.conf for specified application
+         * 
+         * @param string $ps_application_name The name of the application. This is the same as the relevant entry in external_applications.conf without the trailing "_app" (Ex. pdfminer, dcraw, ffmpeg)
+         * @return string Path to application as defined in external_applications.conf
+         */
+        function caGetExternalApplicationPath($ps_application_name) {
+                $o_config = Configuration::load();
+                if (!($o_ext_app_config = Configuration::load($o_config->get('external_applications')))) { return null; }
+                
+                return $o_ext_app_config->get($ps_application_name.'_app');
+        }
 	# ------------------------------------------------------------------------------------------------
 	/**
 	 * Detects if GD PHP extension is available. Return false if GD is installed but lacks JPEG support unless "don't worry about JPEGs" parameter is set to true.

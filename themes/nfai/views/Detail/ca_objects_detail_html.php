@@ -794,6 +794,7 @@ function getAllChildrens($t_object, $request_url, $padding,$access)
 		},
 		function() {
 			this.title = this.t;
+			$("#preview").remove();
 
 		});
 		$("a.preview").mousemove(function(e) {

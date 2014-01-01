@@ -1,1 +1,0 @@
-a:3:{s:15:"SCRIPT_FILENAME";s:32:"/home/nfai/public_html/index.php";s:9:"HTTP_HOST";s:26:"nfai.live.geekschicago.com";s:13:"DOCUMENT_ROOT";s:22:"/home/nfai/public_html";}

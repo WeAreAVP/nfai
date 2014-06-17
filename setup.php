@@ -38,7 +38,7 @@ define("__CA_URL_ROOT__", "");
 #
 #		This must be the full host name. Do not include http:// or any other prefixes.
 #
-define("__CA_SITE_HOSTNAME__", "nfai.live.geekschicago.com");
+define("__CA_SITE_HOSTNAME__", "domain.com");
 
 
 # __CA_APP_NAME__ = a short name alphanumeric-only (no spaces or punctuation) name for this CollectiveAccess installation
@@ -64,13 +64,13 @@ define("__CA_APP_DISPLAY_NAME__", "NFAI");
 define("__CA_DB_HOST__", 'localhost');
 
 # Database login user name
-define("__CA_DB_USER__", 'nfai');
+define("__CA_DB_USER__", 'username');
 
 # Database login password
-define("__CA_DB_PASSWORD__", 'xoho@123');
+define("__CA_DB_PASSWORD__", 'password');
 
 # The name of your CollectiveAccess database
-define("__CA_DB_DATABASE__", 'nfai');
+define("__CA_DB_DATABASE__", 'database_name');
 
 # Only MySQL databases are currently supported so leave this set to 'mysql'!
 define("__CA_DB_TYPE__", 'mysql');
